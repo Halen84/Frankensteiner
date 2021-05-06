@@ -15,7 +15,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="bSave" Content="Import" VerticalAlignment="Top" Margin="0,0,2,0" IsDefault="True" Controls:ControlsHelper.ContentCharacterCasing="Normal" IsEnabled="False" Click="BSave_Click"/>
+            <Button x:Name="bSave" Content="Save" VerticalAlignment="Top" Margin="0,0,2,0" IsDefault="True" Controls:ControlsHelper.ContentCharacterCasing="Normal" IsEnabled="False" Click="BSave_Click"/>
             <Button x:Name="bCancel" Content="Cancel" Grid.Column="1" VerticalAlignment="Top" Margin="2,0,0,0" IsCancel="True" Controls:ControlsHelper.ContentCharacterCasing="Normal" Click="BCancel_Click"/>
         </Grid>
 
