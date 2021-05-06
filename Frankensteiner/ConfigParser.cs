@@ -105,7 +105,7 @@ namespace Frankensteiner
                 {
                     Mercenaries.Add(mercenary);
                 } else {
-                    System.Windows.MessageBox.Show(String.Format("There was an error trying to parse mercenary: {0}.", mercenary.Name), "Warning", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                    //System.Windows.MessageBox.Show(String.Format("There was an error trying to parse mercenary: {0}.", mercenary.Name), "Warning", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                 }
             }
         }
