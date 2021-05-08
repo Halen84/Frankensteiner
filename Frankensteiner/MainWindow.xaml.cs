@@ -616,30 +616,25 @@ namespace Frankensteiner
             #region Auto Restart Mordhau
             if(Properties.Settings.Default.cfgRestartMordhau && cbRestartMordhau.IsChecked.Value)
             {
-                string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
-                if (string.IsNullOrWhiteSpace(tbMordhauPath.Text))
+                if(Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
                 {
-                    System.Windows.MessageBox.Show(String.Format("Mordhau path not set! Did not restart Mordhau."), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                } else {
-                    if (Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
+                    if(wasMordhauKilled)
                     {
-                        if (wasMordhauKilled)
-                        {
-                            if (File.Exists(mordhauExe))
-                            {
-                                Process.Start(mordhauExe);
-                            } else {
-                                System.Windows.MessageBox.Show(String.Format("Couldn't restart Mordhau, unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            }
-                        }
-                    }
-                    else {
+                        string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
                         if (File.Exists(mordhauExe))
                         {
                             Process.Start(mordhauExe);
                         } else {
-                            System.Windows.MessageBox.Show(String.Format("Couldn't restart Mordhau, unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            System.Windows.MessageBox.Show(String.Format("Unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
+                    }
+                } else {
+                    string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
+                    if (File.Exists(mordhauExe))
+                    {
+                        Process.Start(mordhauExe);
+                    } else {
+                        System.Windows.MessageBox.Show(String.Format("Unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
