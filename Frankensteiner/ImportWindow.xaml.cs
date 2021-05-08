@@ -38,17 +38,17 @@ namespace Frankensteiner
                 {
                     if(testMerc.isHordeMercenary)
                     {
-                        MessageBox.Show("Horde Mercenary code successfully validated, you may now import this mercenary!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Successfully validated Horde mercenary!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                         bSave.IsEnabled = true;
                     } else {
-                        MessageBox.Show("Mercenary code successfully validated, you may now import this mercenary!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show(String.Format("Successfully validated \"{0}\"!", testMerc.Name), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                         bSave.IsEnabled = true;
                     }
                 } else {
-                    MessageBox.Show("The code does not appear to be valid! Make sure you copied the code correctly and try again.\n\nI'm a bit stupid at the moment, in the future I might be able to help you!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Invalid mercenary code! Make sure you copied the code correctly and try again.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             } else {
-                MessageBox.Show("I can't validate something that doesn't exist you dum-dum. Try actually pasting something, huh? What do you take me for?!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Cannot validate empty code, you dummy!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         #endregion

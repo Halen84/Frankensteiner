@@ -91,7 +91,7 @@ namespace Frankensteiner
                     rx = new Regex(@"SkillsCustomization=\(.+\),");
                     mercenary.SkillString = rx.Match(parsedMercenary).Value.Replace("),", ")");
                     rx = new Regex(@"Category=.+\)");
-                    mercenary.CategoryString = rx.Match(parsedMercenary).Value.Replace(")", ""); // only temporary. have to wait and see what category is. possibly related to armory rework.
+                    mercenary.CategoryString = rx.Match(parsedMercenary).Value.Replace(")", "");
                 } else {
                     mercenary.OriginalName = "Horde Mercenary";
                     mercenary.Name = "Horde Mercenary";
@@ -105,7 +105,8 @@ namespace Frankensteiner
                 {
                     Mercenaries.Add(mercenary);
                 } else {
-                    System.Windows.MessageBox.Show(String.Format("There was an error trying to parse mercenary: {0}.", mercenary.Name), "Warning", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                    // We already get an error message in ParseFaceValues()
+                    //System.Windows.MessageBox.Show(String.Format("There was an error trying to parse mercenary: {0}.", mercenary.Name), "Warning", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
                 }
             }
         }

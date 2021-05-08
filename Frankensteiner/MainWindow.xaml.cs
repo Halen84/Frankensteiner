@@ -37,7 +37,7 @@ namespace Frankensteiner
         private ObservableCollection<MercenaryItem> _loadedMercenaries = new ObservableCollection<MercenaryItem>();
         private MercenaryItem _copiedMercenary;
         private bool changeDetected = false;
-        private UpdateChecker checkVersion = new UpdateChecker();
+        private UpdateChecker updater = new UpdateChecker();
 
         public MainWindow()
         {
@@ -155,14 +155,12 @@ namespace Frankensteiner
             }
             #endregion
             #region Version Stuff
-            runVersion.Text = String.Format("{0} | Made by Dealman", checkVersion.VERSION);
+            runVersion.Text = String.Format("{0} | Made by Dealman", updater.VERSION);
             if (Properties.Settings.Default.cfgUpdateOnStartup == true)
             {
-                checkVersion.CheckLatestVersion(checkVersion.Timeout, false);
+                updater.CheckLatestVersion(updater.Timeout, false);
             }
             #endregion
-            lbCharacterList.ItemsSource = _loadedMercenaries;
-            RefreshMercenaries(); // Automatically load mercenaries on app startup
             #region Set WindowState
             if (Properties.Settings.Default.isWindowMaximized == true)
             {
@@ -173,6 +171,8 @@ namespace Frankensteiner
                 this.WindowState = WindowState.Normal;
             }
             #endregion
+            lbCharacterList.ItemsSource = _loadedMercenaries;
+            RefreshMercenaries(); // Automatically load mercenaries on app startup
         }
 
         #region Events & Methods for Changing of Theme/Accent
@@ -443,7 +443,7 @@ namespace Frankensteiner
             } else {
                 if (IsMordhauRunning())
                 {
-                    if (System.Windows.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting changes when you close it.\n\nWould you like to close it automatically before proceeding?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    if (System.Windows.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting your changes when you close it.\n\nWould you like to close Mordhau before proceeding?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
                         KillMordhau();
                         wasMordhauKilled = true;
@@ -616,25 +616,30 @@ namespace Frankensteiner
             #region Auto Restart Mordhau
             if(Properties.Settings.Default.cfgRestartMordhau && cbRestartMordhau.IsChecked.Value)
             {
-                if(Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
+                string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
+                if (string.IsNullOrWhiteSpace(tbMordhauPath.Text))
                 {
-                    if(wasMordhauKilled)
+                    System.Windows.MessageBox.Show(String.Format("Mordhau path not set! Did not restart Mordhau."), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                } else {
+                    if (Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
                     {
-                        string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
+                        if (wasMordhauKilled)
+                        {
+                            if (File.Exists(mordhauExe))
+                            {
+                                Process.Start(mordhauExe);
+                            } else {
+                                System.Windows.MessageBox.Show(String.Format("Couldn't restart Mordhau, unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                        }
+                    }
+                    else {
                         if (File.Exists(mordhauExe))
                         {
                             Process.Start(mordhauExe);
                         } else {
-                            System.Windows.MessageBox.Show(String.Format("Unable to restart Mordhau, unable to find executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            System.Windows.MessageBox.Show(String.Format("Couldn't restart Mordhau, unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
-                    }
-                } else {
-                    string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
-                    if (File.Exists(mordhauExe))
-                    {
-                        Process.Start(mordhauExe);
-                    } else {
-                        System.Windows.MessageBox.Show(String.Format("Unable to restart Mordhau, unable to find executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }

@@ -254,7 +254,7 @@ namespace Frankensteiner
                 }
                 return true;
             } else {
-                MessageBox.Show(String.Format("Unable to process face values for mercenary. Count mismatch - expected a total of 147 values. Got {0}.", rxMatches.Count), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(String.Format("Unable to process face values for \"{0}\".\n\nCount mismatch. Expected a total of 147 values, got {1}.", Name, rxMatches.Count), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
         }
@@ -281,7 +281,7 @@ namespace Frankensteiner
                         rx = new Regex(@"SkillsCustomization=\(.+\),");
                         SkillString = rx.Match(OriginalEntry).Value.Replace("),", ")");
                         rx = new Regex(@"Category=.+\)");
-                        CategoryString = rx.Match(OriginalEntry).Value.Replace(")", ""); // only temporary
+                        CategoryString = rx.Match(OriginalEntry).Value.Replace(")", "");
                         if (ParseFaceValues())
                         {
                             return true;

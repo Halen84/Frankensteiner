@@ -31,8 +31,8 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Button x:Name="bImportSingle" Content="Import Single" VerticalAlignment="Top" Margin="0,0,2,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="BImportSingle_Click"/>
-                                    <Button x:Name="bImportMultiple" Content="Import Multiple" VerticalAlignment="Top" Margin="2,0,0,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Grid.Column="1" IsEnabled="False" Focusable="False" Click="BImportMultiple_Click"/>
+                                    <Button x:Name="bImportSingle" Content="Import Mercenary" VerticalAlignment="Top" Margin="0,0,2,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" ToolTip="Import mercenary via mercenary code" Click="BImportSingle_Click"/>
+                                    <Button x:Name="bImportMultiple" Content="Import Multiple Mercenaries [Not Implemented]" VerticalAlignment="Top" Margin="2,0,0,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Grid.Column="1" IsEnabled="False" Focusable="False" Click="BImportMultiple_Click"/>
                                 </Grid>
                                 <Label Content="Create a New Mercenary" Margin="10,73,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
                                 <Button x:Name="bCreateMercenary" Content="Create" HorizontalAlignment="Right" Margin="0,104,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" IsEnabled="False" Click="BCreateMercenary_Click"/>
@@ -206,22 +206,21 @@
                                 <LineBreak/>
                                 <Run Text="• You can also double-click a mercenary to edit them."/>
                                 <LineBreak/>
-                                <Run Text="• Frankenstein button is best button."/>
+                                <Run Text="• Frankenstein button is the best button."/>
                                 <LineBreak/>
                                 <Run Text="• Disable startup movies to load into the game a bit faster if you find yourself restarting a lot."/>
                                 <LineBreak/>
                                 <Run Text="• Enable shortcut keybinds in the Settings"/>
                                 <LineBreak/>
+                                <Run Text="• Your Horde mercenary will always be at the bottom"/>
+                                <LineBreak/>
                                 <Run Text="• You can select multiple mercenaries!"/>
                                 <LineBreak/>
                                 <Run Text="• Support Triternion, they're awesome! No seriously, they are. It literally says so on their website."/>
                                 <LineBreak/>
-                                <Run Text="• Always give love to Seymour! But also be wary..."/>
-                                <LineBreak/>
                                 <Run Text="• If you're a better programmer than me, which you probably are - you can help improve this program via GitHub."/>
                                 <InlineUIContainer>
-                                    <Separator
-                    />
+                                    <Separator/>
                                 </InlineUIContainer>
                             </Paragraph>
                         </FlowDocument>
