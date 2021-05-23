@@ -23,36 +23,30 @@
     <!-- Flyouts -->
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-                        <Controls:Flyout x:Name="toolsFlyout" Header="Additional Tools" Position="Bottom" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:FlyoutsControl}, Path=ActualHeight}">
-                            <Grid Margin="0,10">
-                                <Label Content="Import New Mercenaries" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-                                <Grid Margin="10,41,10,0" VerticalAlignment="Top">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Button x:Name="bImportSingle" Content="Import Mercenary" VerticalAlignment="Top" Margin="0,0,2,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" ToolTip="Import mercenary via mercenary code" Click="BImportSingle_Click"/>
-                                    <Button x:Name="bImportMultiple" Content="Import Multiple Mercenaries [Not Implemented]" VerticalAlignment="Top" Margin="2,0,0,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Grid.Column="1" IsEnabled="False" Focusable="False" Click="BImportMultiple_Click"/>
-                                </Grid>
-                                <Label Content="Create a New Mercenary" Margin="10,73,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
-                                <Button x:Name="bCreateMercenary" Content="Create" HorizontalAlignment="Right" Margin="0,104,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" IsEnabled="False" Click="BCreateMercenary_Click"/>
-                                <TextBox x:Name="tbMercenaryName" Margin="10,104,57,0" TextWrapping="Wrap" VerticalAlignment="Top" Controls:TextBoxHelper.Watermark="Enter a Name..." IsTabStop="False" TextChanged="TbMercenaryName_TextChanged"/>
-                                <Controls:NumericUpDown x:Name="nudMassNumber" Margin="10,166,0,0" Minimum="1" Maximum="255" Value="10" VerticalAlignment="Top" HorizontalAlignment="Left" Focusable="False"/>
-                                <Label Content="Mass Creator" Margin="10,135,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" ToolTip="Useful for creating a lot of randomized faces. Then simply grab the one you like the most."/>
-                                <Button x:Name="bMassCreate" Content="Create Mercenaries" Margin="85,166,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="BMassCreate_Click"/>
-                                <Grid Margin="10,198,10,0" VerticalAlignment="Top">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <RadioButton x:Name="rbMassDefault" Content="Default Faces" FontSize="10" VerticalAlignment="Top" Focusable="False"/>
-                                    <RadioButton x:Name="rbMassRandom" Content="Random Faces" VerticalAlignment="Top" Grid.Column="1" FontSize="10" Focusable="False"/>
-                                    <RadioButton x:Name="rbMassFrankenstein" Content="Frankenstein Faces" Grid.Column="2" FontSize="10" VerticalAlignment="Top" IsChecked="True" Focusable="False"/>
-                                </Grid>
-                            </Grid>
-                        </Controls:Flyout>
-                    </Controls:FlyoutsControl>
+            <Controls:Flyout x:Name="toolsFlyout" Position="Bottom" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:FlyoutsControl}, Path=ActualHeight}">
+                <Grid Margin="0,10">
+                    <Label Content="Import New Mercenaries" Margin="10,10,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Controls:ControlsHelper.ContentCharacterCasing="Normal"/>
+                    <!--Button x:Name="bImportSingle" Content="Import Mercenary" VerticalAlignment="Top" Margin="0,0,2,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" ToolTip="Import mercenary via mercenary code" Click="BImportSingle_Click"/ -->
+                    <Button x:Name="bImportMercenaries" Content="Import Mercenaries" VerticalAlignment="Top" Margin="10,40,10,0" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="BImportMercs_Click" ToolTip="Import mercenaries via mercenary code"/>
+                    <Label Content="Create a New Mercenary" Margin="10,73,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
+                    <Button x:Name="bCreateMercenary" Content="Create" HorizontalAlignment="Right" Margin="0,104,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" IsEnabled="False" Click="BCreateMercenary_Click"/>
+                    <TextBox x:Name="tbMercenaryName" Margin="10,104,57,0" TextWrapping="Wrap" VerticalAlignment="Top" Controls:TextBoxHelper.Watermark="Enter a Name..." IsTabStop="False" TextChanged="TbMercenaryName_TextChanged"/>
+                    <Controls:NumericUpDown x:Name="nudMassNumber" Margin="10,166,0,0" Minimum="1" Maximum="255" Value="10" VerticalAlignment="Top" HorizontalAlignment="Left" Focusable="False"/>
+                    <Label Content="Mass Creator" Margin="10,135,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" ToolTip="Useful for creating a lot of randomized faces. Then simply grab the one you like the most."/>
+                    <Button x:Name="bMassCreate" Content="Create Mercenaries" Margin="85,166,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" Focusable="False" Click="BMassCreate_Click"/>
+                    <Grid Margin="10,198,10,0" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton x:Name="rbMassDefault" Content="Default Faces" FontSize="10" VerticalAlignment="Top" Focusable="False"/>
+                        <RadioButton x:Name="rbMassRandom" Content="Random Faces" VerticalAlignment="Top" Grid.Column="1" FontSize="10" Focusable="False"/>
+                        <RadioButton x:Name="rbMassFrankenstein" Content="Frankenstein Faces" Grid.Column="2" FontSize="10" VerticalAlignment="Top" IsChecked="True" Focusable="False"/>
+                    </Grid>
+                </Grid>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <!-- Actual Window -->
     <Grid x:Name="gWindowBG" Background="#FF454545">

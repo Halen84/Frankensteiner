@@ -10,10 +10,10 @@ using System.Windows;
 [assembly: AssemblyTitle("Frankensteiner")]
 [assembly: AssemblyDescription("Allows for the creation of asymmetric faces for the video game Mordhau.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("N/A")]
+//[assembly: AssemblyCompany("N/A")]
 [assembly: AssemblyProduct("Frankensteiner")]
 [assembly: AssemblyCopyright("GNU GPLv3")]
-[assembly: AssemblyTrademark("N/A")]
+//[assembly: AssemblyTrademark("N/A")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -54,5 +54,5 @@ using System.Windows;
 
 
 [assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyFileVersion("1.3.4.3")]
+[assembly: AssemblyFileVersion("1.3.4.4")]
 [assembly: NeutralResourcesLanguage("en")]

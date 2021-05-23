@@ -36,7 +36,6 @@ namespace Frankensteiner
         private ConfigParser config;
         private ObservableCollection<MercenaryItem> _loadedMercenaries = new ObservableCollection<MercenaryItem>();
         private MercenaryItem _copiedMercenary;
-        private bool changeDetected = false;
         private UpdateChecker updater = new UpdateChecker();
 
         public MainWindow()
@@ -153,22 +152,20 @@ namespace Frankensteiner
                 metroWindow.Width = Properties.Settings.Default.appStartupSize.X;
                 metroWindow.Height = Properties.Settings.Default.appStartupSize.Y;
             }
-            #endregion
-            #region Version Stuff
-            runVersion.Text = String.Format("{0} | Made by Dealman", updater.VERSION);
-            if (Properties.Settings.Default.cfgUpdateOnStartup == true)
-            {
-                updater.CheckLatestVersion(updater.Timeout, false);
-            }
-            #endregion
-            #region Set WindowState
+
+            // Set WindowState
             if (Properties.Settings.Default.isWindowMaximized == true)
             {
                 this.WindowState = WindowState.Maximized;
-            }
-            if (Properties.Settings.Default.isWindowMaximized == false)
-            {
+            } else {
                 this.WindowState = WindowState.Normal;
+            }
+            #endregion
+            #region Version Stuff
+            runVersion.Text = String.Format("{0} | Made by Dealman | Maintained by TuffyTown", updater.VERSION);
+            if (Properties.Settings.Default.cfgUpdateOnStartup == true)
+            {
+                updater.CheckLatestVersion(updater.Timeout, false);
             }
             #endregion
             lbCharacterList.ItemsSource = _loadedMercenaries;
@@ -219,23 +216,33 @@ namespace Frankensteiner
         }
         #endregion
 
-        #region Save Settings
+        #region Metro Window Closing
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
+            List<MercenaryItem> _modifiedMercs = GetModifiedMercenaries();
+
             Properties.Settings.Default.appStartupPos = new System.Drawing.Point(Convert.ToInt16(metroWindow.Left), Convert.ToInt16(metroWindow.Top));
             Properties.Settings.Default.appStartupSize = new System.Drawing.Point(Convert.ToInt16(metroWindow.ActualWidth), Convert.ToInt16(metroWindow.ActualHeight));
 
-            // There is an issue with saving a Minimized WindowState which is being worked on.
             if (this.WindowState == WindowState.Maximized)
             {
                 Properties.Settings.Default.isWindowMaximized = true;
-            }
-            if (this.WindowState == WindowState.Normal)
-            {
+            } else {
                 Properties.Settings.Default.isWindowMaximized = false;
             }
-
             Properties.Settings.Default.Save();
+
+            if (bTitleSave.IsVisible == true)
+            {
+                var response = System.Windows.Forms.MessageBox.Show(String.Format("Warning!\n\nYou have {0} unsaved mercenaries!\n\nWould you like to save them before exiting?", _modifiedMercs.Count), "Frankensteiner", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (response == System.Windows.Forms.DialogResult.Yes)
+                {
+                    SaveAllMercenaries(_modifiedMercs);
+                } else if(response == System.Windows.Forms.DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
         #endregion
 
@@ -254,6 +261,7 @@ namespace Frankensteiner
                     config = new ConfigParser(gameConfigPath);
                     if (config.ParseConfig())
                     {
+                        bTitleSave.Visibility = Visibility.Collapsed;
                         if (_loadedMercenaries.Count > 0)
                         {
                             _loadedMercenaries.Clear();
@@ -433,16 +441,13 @@ namespace Frankensteiner
             bool wasMordhauKilled = false;
 
             #region Auto Close Mordhau Check
-            if (Properties.Settings.Default.cfgAutoClose)
+            if (IsMordhauRunning())
             {
-                if(IsMordhauRunning())
+                if (Properties.Settings.Default.cfgAutoClose)
                 {
                     KillMordhau();
                     wasMordhauKilled = true;
-                }
-            } else {
-                if (IsMordhauRunning())
-                {
+                } else {
                     if (System.Windows.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting your changes when you close it.\n\nWould you like to close Mordhau before proceeding?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
                         KillMordhau();
@@ -463,7 +468,7 @@ namespace Frankensteiner
 
             if(_deleteMercs.Count > 0)
             {
-                if(System.Windows.MessageBox.Show(String.Format("Warning!\n\nThese mercenaries will be deleted:\n{0}\n\nThis action can not be undone! Are you sure you want to proceed?", string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())), "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if(System.Windows.MessageBox.Show(String.Format("Warning!\n\n {0} mercenaries will be deleted!\n\nThis action can not be undone! Are you sure you want to proceed?", _deleteMercs.Count), "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes) // string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())
                 {
                     for (int i = 0; i < _deleteMercs.Count; i++)
                     {
@@ -598,9 +603,9 @@ namespace Frankensteiner
                 File.WriteAllText(gameConfigPath, configContents);
                 if(_validMercs.Count > 0 && _deleteMercs.Count == 0)
                 {
-                    System.Windows.MessageBox.Show(String.Format("Successfully saved these mercenaries:\n\n{0}", string.Join("\n", _validMercs.Select(x => x.Name).ToArray())), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    System.Windows.MessageBox.Show(String.Format("Successfully saved {0} mercenaries!", _validMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information); // string.Join("\n", _validMercs.Select(x => x.Name).ToArray())
                 } else if(_validMercs.Count == 0 && _deleteMercs.Count > 0) {
-                    System.Windows.MessageBox.Show(String.Format("Successfully deleted these mercenaries:\n\n{0}", string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    System.Windows.MessageBox.Show(String.Format("Successfully deleted {0} mercenaries!", _deleteMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information); // string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())
                 }
                 bTitleSave.Visibility = Visibility.Collapsed;
             }
@@ -662,6 +667,7 @@ namespace Frankensteiner
                 }
                 importedMerc.UpdateItemText();
             }
+            CheckForModifiedMercenaries();
         }
         private void ToggleStartupMovies(bool toggle)
         {
@@ -749,11 +755,11 @@ namespace Frankensteiner
                     if (!_loadedMercenaries[i].isOriginal || _loadedMercenaries[i].isImportedMercenary || _loadedMercenaries[i].isNewMercenary || _loadedMercenaries[i].isBeingDeleted)
                     {
                         bTitleSave.Visibility = Visibility.Visible;
-                        changeDetected = true;
+                        //changeDetected = true;
                         break;
                     } else {
                         bTitleSave.Visibility = Visibility.Collapsed;
-                        changeDetected = false;
+                        //changeDetected = false;
                     }
                 }
             }
@@ -838,8 +844,8 @@ namespace Frankensteiner
                         Properties.Settings.Default.cfgConfigPath = gameConfigPath;
                         Properties.Settings.Default.cfgBackupPath = gameConfigPath.Replace(@"\Game.ini", "");
                         Properties.Settings.Default.Save();
-                        System.Windows.MessageBox.Show("Configuration file validated successfully!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-                        RefreshMercenaries();   // We'll also refresh mercenaries here
+                        System.Windows.MessageBox.Show("Successfully validated configuration file!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        RefreshMercenaries(); // We'll also refresh mercenaries here
                     } else {
                         System.Windows.MessageBox.Show("Failed to verify the configuration file! Are you sure this is the correct file? Please, try again.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
@@ -1275,6 +1281,7 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show("Something went wrong! No modified mercenaries were found - unable to save.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        /*
         private void BImportSingle_Click(object sender, RoutedEventArgs e)
         {
             ImportWindow importer = new ImportWindow();
@@ -1283,6 +1290,7 @@ namespace Frankensteiner
                 CheckForModifiedMercenaries();
             }
         }
+        */
         private void BShowTools_Click(object sender, RoutedEventArgs e)
         {
             toolsFlyout.IsOpen = true;
@@ -1318,9 +1326,10 @@ namespace Frankensteiner
             }
             System.Windows.MessageBox.Show(String.Format("Successfully mass created {0} mercenaries!", nudMassNumber.Value), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        private void BImportMultiple_Click(object sender, RoutedEventArgs e)
+        private void BImportMercs_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement. Remember to enable once implemented!
+            ImportWindow importer = new ImportWindow();
+            importer.Show();
         }
         #endregion
 
@@ -1439,15 +1448,6 @@ namespace Frankensteiner
                     }
                     System.Windows.Clipboard.SetText(sb.ToString());
                 }
-                // Import Mercenary
-                if (e.Key == Key.I && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-                {
-                    ImportWindow importer = new ImportWindow();
-                    if (importer.ShowDialog().Value)
-                    {
-                        //CheckForModifiedMercenaries();
-                    }
-                }
                 // Copy Face Values
                 if(e.Key == Key.C && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                 {
@@ -1471,6 +1471,29 @@ namespace Frankensteiner
                         }
                     }
                     CheckForModifiedMercenaries();
+                }
+                // Duplicate Mercenary
+                if (e.Key == Key.D && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                {
+                    for (int i = 0; i < lbCharacterList.SelectedItems.Count; i++)
+                    {
+                        MercenaryItem merc = lbCharacterList.SelectedItems[i] as MercenaryItem;
+                        if (merc != null && !merc.isHordeMercenary)
+                        {
+                            //string code = merc.OriginalEntry.Replace(merc.OriginalName, merc.OriginalName + " (2)");
+                            MercenaryItem newMercenary = new MercenaryItem(merc.OriginalEntry);
+                            if (newMercenary.ValidateMercenaryCode())
+                            {
+                                newMercenary.index = _loadedMercenaries.Count + 1;
+                                newMercenary.isNewMercenary = true;
+                                newMercenary.isOriginal = false;
+                                newMercenary.UpdateItemText();
+                                _loadedMercenaries.Insert(0, newMercenary);
+                                tbMercenaryName.Text = "";
+                                CheckForModifiedMercenaries();
+                            }
+                        }
+                    }
                 }
                 CheckForModifiedMercenaries();
             }
