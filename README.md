@@ -9,7 +9,7 @@
 </details>
 
 # Frankensteiner
-This is a program to aid in the process of creating asymmetric faces for your Mordhau characters. What would otherwise be a gruesome process of individually changing up to 147 values - can now be done through a user-friendly interface instead.
+Frankensteiner is a program that allows you to create asymmetrical faces for your Mordhau characters. What would otherwise be a gruesome process of individually changing up to 147 values, can now be done through a user-friendly interface instead.
 
 ## Getting Started
 If you don't want to build it yourself, you can download the latest version from the [Releases](https://github.com/Dealman/Frankensteiner/releases) page.
@@ -27,7 +27,7 @@ When you first run the program it will ask you whether you want to locate the co
 You can select either one or multiple mercenaries. If you want to select multiple mercenaries, it works like any other list. You can hold CTRL to select individual entries - or hold Shift to select all entries between the first and last selection.
 
 ### Editing
-If you have only one mercenary selected, you can either double-click or press enter to open the Mercenary Editor. Here you can change all the values as you please and also change the name.
+If you have only one mercenary selected, you can either double-click or press enter to open the Mercenary Editor. Here, you can change all of the face values as you please and also change the name.
 
 If you have multiple mercenaries selected, you can not use the Mercenary Editor. But you can Randomize and Frankenstein them via the context menu *(right-click)*, or shortcuts.
 
@@ -43,15 +43,14 @@ Under Settings you can enable shortcuts, this is useful for when you wanna make 
 | CTRL+Z | Revert Changes | Yes                      |
 | CTRL+S | Save Changes | Yes                        |
 | CTRL+E | Export to Clipboard | Yes                 |
-| CTRL+D | Duplicate Mercenary | Yes                 |
 | CTRL+R | Randomize | Yes                           |
 | CTRL+F | Frankenstein | Yes                        |
-| CTRL+A | Select All Mercenaries | N/A              |
+| CTRL+A | Select All Mercenaries | Yes              |
 | CTRL+C | Copy Face Values | No                     |
 | CTRL+V | Paste Face Values | Yes                   |
 
 ### Conflicts
-It is recommended that you do not have Mordhau running as you're using this program. Or at the very least, do not idle in the customization menu - since Mordhau will write to the config every single time you make even the tiniest of changes. Or else it's very likely there will be conflicts when trying to save **your** changes.
+It is recommended that you do not have Mordhau running when using this program. Or at the very least, do not idle in the customization menu - since Mordhau will write to the config every single time you make even the tiniest of changes. Or else it's very likely there will be conflicts when trying to save **your** changes.
 
 But in such a case, I have implemented an experimental feature to solve conflicts. If there are conflicts it will ask you to resolve them - a new window will open up showing you the conflicted entries you want to save in the list on the **left**.
 

@@ -14,54 +14,26 @@ namespace Frankensteiner
         private uint _translation = 0;
         public uint Translation
         {
-            get { return _translation; }
-            set
-            {
-                if (value != _translation)
-                {
-                    _translation = value;
-                    OnPropertyChanged(nameof(Translation));
-                }
-            }
+            get => _translation;
+            set => SetField(ref _translation, value);
         }
         private uint _rotation = 0;
         public uint Rotation
         {
-            get { return _rotation; }
-            set
-            {
-                if (value != _rotation)
-                {
-                    _rotation = value;
-                    OnPropertyChanged(nameof(Rotation));
-                }
-            }
+            get => _rotation;
+            set => SetField(ref _rotation, value);
         }
         private uint _scale = 0;
         public uint Scale
         {
-            get { return _scale; }
-            set
-            {
-                if (value != _scale)
-                {
-                    _scale = value;
-                    OnPropertyChanged(nameof(Scale));
-                }
-            }
+            get => _scale;
+            set => SetField(ref _scale, value);
         }
         private SolidColorBrush _bg = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
         public SolidColorBrush BackgroundColour
         {
-            get { return _bg; }
-            set
-            {
-                if(value != _bg)
-                {
-                    _bg = value;
-                    OnPropertyChanged(nameof(BackgroundColour));
-                }
-            }
+            get => _bg;
+            set => SetField(ref _bg, value);
         }
         #endregion
 

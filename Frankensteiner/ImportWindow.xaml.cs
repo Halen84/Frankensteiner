@@ -21,9 +21,7 @@ namespace Frankensteiner
     /// </summary>
     public partial class ImportWindow : MetroWindow
     {
-        private List<MercenaryItem> mercenaryList = new List<MercenaryItem>();
-        private List<MercenaryItem> _invalidMercs = new List<MercenaryItem>();
-        private List<string> parsedMercenaries = new List<string>();
+        private List<MercenaryItem> _mercenaryList = new List<MercenaryItem>();
         private MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
 
         public ImportWindow()
@@ -35,13 +33,13 @@ namespace Frankensteiner
         #region Code Validation
         private void BValidate_Click(object sender, RoutedEventArgs e)
         {
+            List<string> parsedMercenaries = new List<string>();
+            List<MercenaryItem> _invalidMercs = new List<MercenaryItem>();
+
             if (!String.IsNullOrWhiteSpace(tbMercenaryCode.Text))
             {
-                #region Clear Lists For Next Validation
-                mercenaryList.Clear();
-                _invalidMercs.Clear();
-                parsedMercenaries.Clear();
-                #endregion
+                _mercenaryList.Clear(); // Clear List For Next Validation
+
                 Regex profile = new Regex(@"^CharacterProfiles=\(.+\)", RegexOptions.Multiline);
                 Regex ws = new Regex(@"^\s+CharacterProfiles=\(.+\)", RegexOptions.Multiline); // We'll also look for any leading whitespace
                 Regex horde = new Regex(@"(DefaultCharacterFace=\(.+)");
@@ -63,7 +61,7 @@ namespace Frankensteiner
                     MercenaryItem mercenary = new MercenaryItem(parsedMercenary);
                     if (mercenary.ValidateMercenaryCode())
                     {
-                        mercenaryList.Add(mercenary);
+                        _mercenaryList.Add(mercenary);
                         bSave.IsEnabled = true;
                     }
                     else
@@ -71,13 +69,13 @@ namespace Frankensteiner
                         _invalidMercs.Add(mercenary);
                     }
                 }
-                mercenaryList.Reverse(); // Reverse the list so it appears in the order it was pasted in
-                if (mercenaryList.Count == 0 && _invalidMercs.Count == 0)
+                _mercenaryList.Reverse(); // Reverse the list so it appears in the order it was pasted in
+                if (_mercenaryList.Count == 0 && _invalidMercs.Count == 0)
                 {
                     MessageBox.Show("Invalid mercenary code! Make sure you copied the code correctly and try again.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 } else
                 {
-                    MessageBox.Show(String.Format("{0} mercenaries successfully validated!\n\n{1} mercenaries failed to validate!", mercenaryList.Count, _invalidMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(String.Format("{0} mercenaries successfully validated!\n\n{1} mercenaries failed to validate!", _mercenaryList.Count, _invalidMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
@@ -95,7 +93,7 @@ namespace Frankensteiner
 
         private void BSave_Click(object sender, RoutedEventArgs e)
         {
-            foreach (MercenaryItem mercenary in mercenaryList)
+            foreach (MercenaryItem mercenary in _mercenaryList)
             {
                 mercenary.ItemText = String.Format("{0} - Unsaved Imported Mercenary!", mercenary.Name);
                 SolidColorBrush newColor = (Properties.Settings.Default.appTheme == "Dark") ? new SolidColorBrush(Color.FromRgb(69, 69, 69)) : new SolidColorBrush(Color.FromRgb(245, 245, 245));

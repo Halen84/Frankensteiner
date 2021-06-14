@@ -42,14 +42,14 @@ namespace Frankensteiner
             }
             #endregion
 
-            string[] nameValue =
-            {"Mouth - Middle", "Mouth - Edges", "Maxilla", "Left Eyebrow", "Unknown Value [1]", "Right Eyebrow", "Right Eye",
-            "Unknown Value [2]", "Unknown Value [3]", "Unknown Value [4]", "Mouth", "Left Eye", "Lips - Left Edge", "Lips - Right Edge",
-            "Chin", "Jaw - Left", "Jaw - Right", "Lower Lip", "Lower Lip - Left", "Lower Lip - Right", "Infraorbital Margin - Left",
-            "Medial Cleft", "Lip - Left", "Lip - Right", "Philtrum", "Nose - Tip", "Nose Bridge", "Nose Bridge - Top",
-            "Infraorbital Margin - Right", "Cheek - Left", "Cheek - Right", "Left Eyebrow - Inner", "Right Eyebrow - Inner", "Left Eyebrow - Middle", "Right Eyebrow - Middle",
-            "Left Eyebrow - Outter", "Right Eyebrow - Outter", "Ear - Left", "Ear - Right", "Unknown Value [5]", "Unknown Value [6]", "Left Eyelid - Top",
-            "Left Eyelid - Bottom", "Unknown Value [7]", "Unknown Value [8]", "Right Eyelid - Top", "Right Eyelid - Bottom", "Cheekbone - Left", "Cheekbone - Right"};
+            string[] boneNames =
+                {"Mouth - Middle", "Mouth - Edges", "Maxilla", "Left Eyebrow", "Unknown Value [1]", "Right Eyebrow", "Right Eye",
+                "Unknown Value [2]", "Unknown Value [3]", "Unknown Value [4]", "Mouth", "Left Eye", "Lips - Left Edge", "Lips - Right Edge",
+                "Chin", "Jaw - Left", "Jaw - Right", "Lower Lip", "Lower Lip - Left", "Lower Lip - Right", "Infraorbital Margin - Left",
+                "Medial Cleft", "Upper Lip - Left", "Upper Lip - Right", "Philtrum", "Nose - Tip", "Nose Bridge", "Nose Bridge - Top",
+                "Infraorbital Margin - Right", "Cheek - Left", "Cheek - Right", "Left Eyebrow - Inner", "Right Eyebrow - Inner", "Left Eyebrow - Middle", "Right Eyebrow - Middle",
+                "Left Eyebrow - Outter", "Right Eyebrow - Outter", "Ear - Left", "Ear - Right", "Unknown Value [5]", "Unknown Value [6]", "Left Eyelid - Top",
+                "Left Eyelid - Bottom", "Unknown Value [7]", "Unknown Value [8]", "Right Eyelid - Top", "Right Eyelid - Bottom", "Cheekbone - Left", "Cheekbone - Right"};
 
             // Create 49 sliders, it consists of 3 separate sliders - one for each value
             dgValueList.ItemsSource = _sliders;
@@ -59,8 +59,7 @@ namespace Frankensteiner
                 newSlider.Translation = selectedMerc.FaceValues[i].Translation;
                 newSlider.Rotation = selectedMerc.FaceValues[i].Rotation;
                 newSlider.Scale = selectedMerc.FaceValues[i].Scale;
-                //newSlider.UpdateDescription(String.Format("{0}: Unknown Value", (i + 1)));
-                newSlider.UpdateDescription(string.Format(nameValue[i]));
+                newSlider.UpdateDescription(string.Format(boneNames[i]));
                 _sliders.Add(newSlider);
             }
             tbNewName.IsEnabled = !mercenary.isHordeMercenary;
@@ -127,7 +126,12 @@ namespace Frankensteiner
                 mercenary.FaceValues[i] = new MercenaryItem.FaceValue(Convert.ToUInt16(faceSlider.Translation), Convert.ToUInt16(faceSlider.Rotation), Convert.ToUInt16(faceSlider.Scale));
             }
 
-            mercenary.Name = (!String.IsNullOrWhiteSpace(tbNewName.Text)) ? tbNewName.Text : mercenary.Name;
+            //mercenary.Name = (!String.IsNullOrWhiteSpace(tbNewName.Text)) ? tbNewName.Text : mercenary.Name;
+            if (tbNewName.Text != null)
+            {
+                string stripped = tbNewName.Text.Replace("\"", "");
+                mercenary.Name = String.IsNullOrWhiteSpace(stripped) ? mercenary.Name : stripped;
+            }
             if(mercenary.Name == mercenary.OriginalName)
             {
                 if (!mercenary.OriginalFaceValues.SequenceEqual(mercenary.FaceValues))

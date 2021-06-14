@@ -66,7 +66,7 @@ namespace Frankensteiner
                 mercenary.index = counter;
                 counter++;
                 // Name + ItemText
-                Regex rx = new Regex("\\\"(.*?)\\\""); // Use Regex to find the mercenary's name
+                Regex rx = new Regex("\"(.*?)\""); // Use Regex to find the mercenary's name
                 mercenary.Name = rx.Match(parsedMercenary).Value.Replace("\"", ""); // Once found, remove the quotation marks - they were only used to help find the name
                 // Check if the Name is empty, if true - that means it's the Horde character and needs to be handled differently
                 if(!String.IsNullOrWhiteSpace(mercenary.Name))

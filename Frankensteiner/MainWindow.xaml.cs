@@ -24,7 +24,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-// Relevant File? C:\Program Files (x86)\Steam\steamapps\common\Mordhau\Mordhau\Content\Mordhau\Blueprints\Characters\BP_ControllableDummy.uasset
 
 namespace Frankensteiner
 {
@@ -59,7 +58,7 @@ namespace Frankensteiner
                             Properties.Settings.Default.cfgConfigPath = gameConfigPath;
                             Properties.Settings.Default.cfgBackupPath = gameConfigPath.Replace("Game.ini", "");
                             Properties.Settings.Default.Save();
-                            System.Windows.MessageBox.Show("Successfully located the configuration file! You may now create.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                            System.Windows.MessageBox.Show("Successfully located the configuration file!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     } catch(Exception eggseption) {
                         System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to automagically find the configuration file! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -385,7 +384,7 @@ namespace Frankensteiner
             {
                 for(int i=0; i < _loadedMercenaries.Count; i++)
                 {
-                    if(!_loadedMercenaries[i].isOriginal || _loadedMercenaries[i].isImportedMercenary || _loadedMercenaries[i].isBeingDeleted)
+                    if(!_loadedMercenaries[i].isOriginal || _loadedMercenaries[i].isNewMercenary || _loadedMercenaries[i].isImportedMercenary || _loadedMercenaries[i].isBeingDeleted || _loadedMercenaries[i].isDuplicated)
                     {
                         _modifiedMercs.Add(_loadedMercenaries[i]);
                     }
@@ -448,10 +447,15 @@ namespace Frankensteiner
                     KillMordhau();
                     wasMordhauKilled = true;
                 } else {
-                    if (System.Windows.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting your changes when you close it.\n\nWould you like to close Mordhau before proceeding?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    var response = System.Windows.Forms.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting your changes when you close it.\n\nWould you like to close Mordhau before proceeding?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (response == System.Windows.Forms.DialogResult.Yes)
                     {
                         KillMordhau();
                         wasMordhauKilled = true;
+                    } else if (response == System.Windows.Forms.DialogResult.Cancel)
+                    {
+                        response = System.Windows.Forms.DialogResult.Cancel;
+                        return;
                     }
                 }
             }
@@ -619,27 +623,43 @@ namespace Frankensteiner
             #endregion
 
             #region Auto Restart Mordhau
-            if(Properties.Settings.Default.cfgRestartMordhau && cbRestartMordhau.IsChecked.Value)
+            if (Properties.Settings.Default.cfgRestartMordhau && cbRestartMordhau.IsChecked.Value)
             {
-                if(Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
+                if (Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
                 {
-                    if(wasMordhauKilled)
+                    if (wasMordhauKilled)
                     {
                         string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
                         if (File.Exists(mordhauExe))
                         {
                             Process.Start(mordhauExe);
-                        } else {
-                            System.Windows.MessageBox.Show(String.Format("Unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                        else
+                        {
+                            if (string.IsNullOrWhiteSpace(tbMordhauPath.Text))
+                            {
+                                System.Windows.MessageBox.Show("Did not restart Mordhau because the path is not set.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            } else {
+                                System.Windows.MessageBox.Show(String.Format("Unable to restart Mordhau. Path searched:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
                         }
                     }
-                } else {
+                }
+                else
+                {
                     string mordhauExe = tbMordhauPath.Text + @"\Mordhau\Binaries\Win64\Mordhau-Win64-Shipping.exe";
                     if (File.Exists(mordhauExe))
                     {
                         Process.Start(mordhauExe);
-                    } else {
-                        System.Windows.MessageBox.Show(String.Format("Unable to find Mordhau executable. This is where I looked:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        if (string.IsNullOrWhiteSpace(tbMordhauPath.Text))
+                        {
+                            System.Windows.MessageBox.Show("Did not restart Mordhau because the path is not set.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        } else {
+                            System.Windows.MessageBox.Show(String.Format("Unable to restart Mordhau. Path searched:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
                     }
                 }
             }
@@ -752,7 +772,7 @@ namespace Frankensteiner
             {
                 for (int i = 0; i < _loadedMercenaries.Count; i++)
                 {
-                    if (!_loadedMercenaries[i].isOriginal || _loadedMercenaries[i].isImportedMercenary || _loadedMercenaries[i].isNewMercenary || _loadedMercenaries[i].isBeingDeleted)
+                    if (!_loadedMercenaries[i].isOriginal || _loadedMercenaries[i].isImportedMercenary || _loadedMercenaries[i].isNewMercenary || _loadedMercenaries[i].isBeingDeleted || _loadedMercenaries[i].isDuplicated)
                     {
                         bTitleSave.Visibility = Visibility.Visible;
                         //changeDetected = true;
@@ -789,7 +809,7 @@ namespace Frankensteiner
                     tbMercenaryName.Text = "";
                     if (!isMassCreation)
                     {
-                        System.Windows.MessageBox.Show(String.Format("Successfully created mercenary {0}", newMercenary.Name), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        System.Windows.MessageBox.Show(String.Format("Successfully created {0}", newMercenary.Name), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     CheckForModifiedMercenaries();
                 }
@@ -833,6 +853,7 @@ namespace Frankensteiner
             try
             {
                 OpenFileDialog fileDialog = new OpenFileDialog();
+                fileDialog.Filter = "Configuration Settings|*.ini";
                 if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     string fileContents = File.ReadAllText(fileDialog.FileName);
@@ -860,6 +881,7 @@ namespace Frankensteiner
             try
             {
                 FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+                folderDialog.ShowNewFolderButton = false;
                 if(folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     if(File.Exists(folderDialog.SelectedPath+@"\Mordhau.exe") && Directory.Exists(folderDialog.SelectedPath+@"\Mordhau\Content\Movies"))
@@ -1042,6 +1064,11 @@ namespace Frankensteiner
                     MercenaryItem selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
                     if (selectedMerc != null)
                     {
+                        /*Regex category = new Regex("\"(.*?)\"");
+                        if (category.IsMatch(selectedMerc.CategoryString))
+                        {
+                            lbChangeCategory.Text = category.Match(selectedMerc.CategoryString).Value.Replace("\"", "");
+                        }*/
                         bool changedOrImported = (!selectedMerc.isOriginal || selectedMerc.isOriginal && selectedMerc.isImportedMercenary) ? true : false;
                         // Edit
                         UpdateContextItem(lbContextEdit, String.Format("Edit {0}", selectedMerc.Name), true);
@@ -1056,7 +1083,8 @@ namespace Frankensteiner
                         UpdateContextItem(lbContextExport, String.Format("Export {0} to Clipboard", selectedMerc.Name), true);
                         // Copy Face
                         UpdateContextItem(lbContextCopyFace, String.Format("Copy Face Values from {0}", selectedMerc.Name), true);
-                        UpdateContextItem(lbContextCopyFormat, "Copy as Horde Format", true);
+                        UpdateContextItem(lbContextCopyFormat, "Copy Face Values", true);
+                        UpdateContextItem(lbContextCopyHordeFormat, "Copy as Horde Format", true);
                         // Paste Face
                         if(selectedMerc != _copiedMercenary && _copiedMercenary != null)
                         {
@@ -1087,6 +1115,17 @@ namespace Frankensteiner
                             break;
                         }
                     }
+                    // Check if all CategoryString's are the same. If they are, set ChangeCategory TextBox to CategoryString
+                    /*string compareString = selectedMercs[0].CategoryString;
+                    bool isEqual = selectedMercs.Skip(1).All(s => string.Equals(compareString, s.CategoryString, StringComparison.InvariantCultureIgnoreCase));
+                    if (isEqual)
+                    {
+                        Regex category = new Regex("\"(.*?)\"");
+                        if (category.IsMatch(compareString))
+                        {
+                            lbChangeCategory.Text = category.Match(compareString).Value.Replace("\"", "");
+                        }
+                    }*/
                     // Edit
                     UpdateContextItem(lbContextEdit, "Edit (Multiple Selected)", true);
                     UpdateContextItem(lbContextQuickEdit, "Open in Mercenary Editor", false);
@@ -1101,11 +1140,16 @@ namespace Frankensteiner
                     // Copy Face
                     UpdateContextItem(lbContextCopyFace, "Copy Face Values from (Multiple Selected)", false);
                     // Paste Face
-                    UpdateContextItem(lbContextPasteFace, "Paste Face Values to (Multiple Selected)", true);
+                    UpdateContextItem(lbContextPasteFace, "Paste Face Values to (Multiple Selected)", _copiedMercenary != null);
                     // Delete
                     UpdateContextItem(lbContextDelete, "Mark for Deletion (Multiple Selected)", true);
                 }
             }
+        }
+        private void lbContextMenu_Closed(object sender, RoutedEventArgs e)
+        {
+            //CheckForModifiedMercenaries();
+            //lbChangeCategory.Text = "";
         }
         // Context Option: Save
         private void LbContextSave_Click(object sender, RoutedEventArgs e)
@@ -1239,7 +1283,7 @@ namespace Frankensteiner
             CheckForModifiedMercenaries();
         }
         // Context Option: Copy as Horde Format
-        private void LbContextCopyFormat_Click(object sender, RoutedEventArgs e)
+        private void LbContextCopyHordeFormat_Click(object sender, RoutedEventArgs e)
         {
             MercenaryItem selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
             if (selectedMerc != null)
@@ -1248,6 +1292,34 @@ namespace Frankensteiner
             }
             CheckForModifiedMercenaries();
         }
+        // Context Option: Copy Face Values
+        private void LbContextCopyFormat_Click(object sender, RoutedEventArgs e)
+        {
+            MercenaryItem selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
+            if (selectedMerc != null)
+            {
+                System.Windows.Clipboard.SetText(selectedMerc.FaceString);
+            }
+            CheckForModifiedMercenaries();
+        }
+        // Context Option: Change Category
+        /*private void lbChangeCategory_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            System.Windows.Controls.TextBox text = sender as System.Windows.Controls.TextBox;
+            if (lbChangeCategory.IsFocused)
+            {
+                for (int i = 0; i < lbCharacterList.SelectedItems.Count; i++)
+                {
+                    MercenaryItem selectedMerc = lbCharacterList.SelectedItems[i] as MercenaryItem;
+                    if (selectedMerc != null)
+                    {
+                        selectedMerc.CategoryString = "Category=" + "\"" + text.Text.Replace("\"", "") + "\"";
+                        selectedMerc.isOriginal = false;
+                        selectedMerc.UpdateItemText();
+                    }
+                }
+            }
+        }*/
         #endregion
 
         #region Button Events
@@ -1260,11 +1332,13 @@ namespace Frankensteiner
         {
             Process.Start("https://github.com/Dealman/Frankensteiner");
         }
-        private void BReddit_Click(object sender, RoutedEventArgs e)
+        // Reddit post is outdated
+        /*private void BReddit_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://www.reddit.com/r/Mordhau/comments/cll3kl/release_frankensteiner_v1200/");
-        }
-        // Mordhau forums are being discontinued
+        }*/
+
+        // Mordhau forums have been discontinued
         /*private void BMordhau_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://mordhau.com/forum/topic/19301/release-frankensteiner-create-asymmetric-faces/");
@@ -1338,7 +1412,7 @@ namespace Frankensteiner
             if(Properties.Settings.Default.cfgShortcutsEnabled)
             {
                 // Enter - Open Mercenary Editor
-                if (e.Key == Key.Enter)
+                if (e.Key == Key.Enter && lbContextMenu.IsVisible == false)
                 {
                     if (lbCharacterList.SelectedItems.Count == 1)
                     {
@@ -1473,20 +1547,20 @@ namespace Frankensteiner
                     CheckForModifiedMercenaries();
                 }
                 // Duplicate Mercenary
-                if (e.Key == Key.D && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                /*if (e.Key == Key.D && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                 {
                     for (int i = 0; i < lbCharacterList.SelectedItems.Count; i++)
                     {
                         MercenaryItem merc = lbCharacterList.SelectedItems[i] as MercenaryItem;
                         if (merc != null && !merc.isHordeMercenary)
                         {
-                            //string code = merc.OriginalEntry.Replace(merc.OriginalName, merc.OriginalName + " (2)");
-                            MercenaryItem newMercenary = new MercenaryItem(merc.OriginalEntry);
-                            if (newMercenary.ValidateMercenaryCode())
+                            string code = merc.ToString().Replace(merc.Name, merc.Name + " (2)");
+                            MercenaryItem newMercenary = new MercenaryItem(code);
+                            if (newMercenary.ValidateMercenaryCode() && newMercenary != merc)
                             {
                                 newMercenary.index = _loadedMercenaries.Count + 1;
                                 newMercenary.isNewMercenary = true;
-                                newMercenary.isOriginal = false;
+                                newMercenary.isDuplicated = true;
                                 newMercenary.UpdateItemText();
                                 _loadedMercenaries.Insert(0, newMercenary);
                                 tbMercenaryName.Text = "";
@@ -1494,7 +1568,7 @@ namespace Frankensteiner
                             }
                         }
                     }
-                }
+                }*/
                 CheckForModifiedMercenaries();
             }
         }

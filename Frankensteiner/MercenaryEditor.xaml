@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="Mercenary Editor - Editing MercenaryName" Height="450" Width="800" TitleCaps="False" WindowStartupLocation="CenterOwner">
     <Controls:MetroWindow.Flyouts>
-        <Controls:FlyoutsControl>
+        <Controls:FlyoutsControl Margin="0,30,0,0">
             <Controls:Flyout x:Name="settingsFlyout" Header="Editing Tools" Position="Bottom" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:FlyoutsControl}, Path=ActualHeight}" Opacity="{Binding Value, ElementName=sliderFlyoutOpacity}">
                 <Grid>
                     <Controls:RangeSlider x:Name="sliderRandomRange" Margin="31,41,67,0" Maximum="65535" SmallChange="1" TickPlacement="TopLeft" TickFrequency="1024" MinRangeWidth="1" UpperValue="65535" IsSnapToTickEnabled="True" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Height="26"/>
