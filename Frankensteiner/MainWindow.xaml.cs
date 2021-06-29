@@ -40,6 +40,7 @@ namespace Frankensteiner
         public MainWindow()
         {
             InitializeComponent();
+
             #region Auto-find Game.ini + Set Default Backup Folder
             if (String.IsNullOrWhiteSpace(Properties.Settings.Default.cfgConfigPath))
             {
@@ -69,6 +70,7 @@ namespace Frankensteiner
                 tbConfigPath.Text = gameConfigPath;
             }
             #endregion
+
             #region Fetch & Validate Saved Mordhau Folder
             try
             {
@@ -90,6 +92,7 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to browse to the game's folder! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             #endregion
+
             #region Fetch Saved Backup Folder
             try
             {
@@ -99,6 +102,7 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to browse to the last saved backup folder! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             #endregion
+
             #region Fetch Settings
             // ZIP Backup
             cbZipBackup.IsChecked = Properties.Settings.Default.cfgZIPBackup;
@@ -121,6 +125,7 @@ namespace Frankensteiner
             // Check for updates
             cbUpdateOnStartup.IsChecked = Properties.Settings.Default.cfgUpdateOnStartup;
             #endregion
+
             #region Set Application Theme & Accent
             try
             {
@@ -140,6 +145,7 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to update the applications theme/accent! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             #endregion
+
             #region Set Application Startup Pos & Size
             // TODO: Make this if statement less unintuitive (if X or Y is exactly 0, it won't set position)
             if (Properties.Settings.Default.appStartupPos.X != 0 && Properties.Settings.Default.appStartupPos.Y != 0)
@@ -160,13 +166,15 @@ namespace Frankensteiner
                 this.WindowState = WindowState.Normal;
             }
             #endregion
+
             #region Version Stuff
-            runVersion.Text = String.Format("{0} | Made by Dealman | Maintained by TuffyTown", updater.VERSION);
+            runVersion.Text = String.Format("{0} | Made by Dealman | Maintained by TuffyTown", updater.Version);
             if (Properties.Settings.Default.cfgUpdateOnStartup == true)
             {
                 updater.CheckLatestVersion(updater.Timeout, false);
             }
             #endregion
+
             lbCharacterList.ItemsSource = _loadedMercenaries;
             RefreshMercenaries(); // Automatically load mercenaries on app startup
         }
@@ -689,6 +697,7 @@ namespace Frankensteiner
             }
             CheckForModifiedMercenaries();
         }
+
         private void ToggleStartupMovies(bool toggle)
         {
             if(!String.IsNullOrWhiteSpace(tbMordhauPath.Text))
@@ -737,6 +746,8 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show("Failed to disable Mordhau startup movies - path to Mordhau has not been set.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
+        #region Mordhau Process Checking
         private bool IsMordhauRunning()
         {
             try
@@ -752,6 +763,7 @@ namespace Frankensteiner
                 return false;
             }
         }
+
         private void KillMordhau()
         {
             try
@@ -766,6 +778,8 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show(String.Format("An error has occured whilst trying to fetch and/or kill the Mordhau process.\n\nError Message: {0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        #endregion
+
         private void CheckForModifiedMercenaries()
         {
             if(_loadedMercenaries.Count > 0)
@@ -784,9 +798,10 @@ namespace Frankensteiner
                 }
             }
         }
+
         private void CreateMercenary(string name, int faceType, bool isMassCreation)
         {
-            // TODO: Maybe prevent duplicate names. Mordhau still loads duplicates, however.
+            // TODO: Prevent duplicate names here too
             if (!String.IsNullOrWhiteSpace(name))
             {
                 // 0 = Default, 1 = Random, 2 = Frankenstein
@@ -818,6 +833,20 @@ namespace Frankensteiner
                     System.Windows.MessageBox.Show("Failed to parse face values. Could not create new mercenary!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
+        }
+
+        public bool CheckMercenaryName(string name) // Check for any duplicate names
+        {
+            bool match = false;
+            for (int i = 0; i < _loadedMercenaries.Count; i++)
+            {
+                if (_loadedMercenaries[i].Name == name)
+                {
+                    match = true;
+                    break;
+                }
+            }
+            return match;
         }
 
         #region UpdateContextItem Methods
@@ -1064,11 +1093,11 @@ namespace Frankensteiner
                     MercenaryItem selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
                     if (selectedMerc != null)
                     {
-                        /*Regex category = new Regex("\"(.*?)\"");
+                        Regex category = new Regex("\"(.*?)\"");
                         if (category.IsMatch(selectedMerc.CategoryString))
                         {
                             lbChangeCategory.Text = category.Match(selectedMerc.CategoryString).Value.Replace("\"", "");
-                        }*/
+                        }
                         bool changedOrImported = (!selectedMerc.isOriginal || selectedMerc.isOriginal && selectedMerc.isImportedMercenary) ? true : false;
                         // Edit
                         UpdateContextItem(lbContextEdit, String.Format("Edit {0}", selectedMerc.Name), true);
@@ -1115,8 +1144,8 @@ namespace Frankensteiner
                             break;
                         }
                     }
-                    // Check if all CategoryString's are the same. If they are, set ChangeCategory TextBox to CategoryString
-                    /*string compareString = selectedMercs[0].CategoryString;
+                    // Check if all CategoryString's are the same
+                    string compareString = selectedMercs[0].CategoryString;
                     bool isEqual = selectedMercs.Skip(1).All(s => string.Equals(compareString, s.CategoryString, StringComparison.InvariantCultureIgnoreCase));
                     if (isEqual)
                     {
@@ -1125,7 +1154,7 @@ namespace Frankensteiner
                         {
                             lbChangeCategory.Text = category.Match(compareString).Value.Replace("\"", "");
                         }
-                    }*/
+                    }
                     // Edit
                     UpdateContextItem(lbContextEdit, "Edit (Multiple Selected)", true);
                     UpdateContextItem(lbContextQuickEdit, "Open in Mercenary Editor", false);
@@ -1148,8 +1177,8 @@ namespace Frankensteiner
         }
         private void lbContextMenu_Closed(object sender, RoutedEventArgs e)
         {
-            //CheckForModifiedMercenaries();
-            //lbChangeCategory.Text = "";
+            CheckForModifiedMercenaries();
+            lbChangeCategory.Text = "";
         }
         // Context Option: Save
         private void LbContextSave_Click(object sender, RoutedEventArgs e)
@@ -1303,7 +1332,7 @@ namespace Frankensteiner
             CheckForModifiedMercenaries();
         }
         // Context Option: Change Category
-        /*private void lbChangeCategory_TextChanged(object sender, TextChangedEventArgs e)
+        private void lbChangeCategory_TextChanged(object sender, TextChangedEventArgs e)
         {
             System.Windows.Controls.TextBox text = sender as System.Windows.Controls.TextBox;
             if (lbChangeCategory.IsFocused)
@@ -1311,7 +1340,7 @@ namespace Frankensteiner
                 for (int i = 0; i < lbCharacterList.SelectedItems.Count; i++)
                 {
                     MercenaryItem selectedMerc = lbCharacterList.SelectedItems[i] as MercenaryItem;
-                    if (selectedMerc != null)
+                    if (selectedMerc != null && !selectedMerc.isHordeMercenary)
                     {
                         selectedMerc.CategoryString = "Category=" + "\"" + text.Text.Replace("\"", "") + "\"";
                         selectedMerc.isOriginal = false;
@@ -1319,7 +1348,7 @@ namespace Frankensteiner
                     }
                 }
             }
-        }*/
+        }
         #endregion
 
         #region Button Events
@@ -1355,16 +1384,6 @@ namespace Frankensteiner
                 System.Windows.MessageBox.Show("Something went wrong! No modified mercenaries were found - unable to save.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /*
-        private void BImportSingle_Click(object sender, RoutedEventArgs e)
-        {
-            ImportWindow importer = new ImportWindow();
-            if (importer.ShowDialog().Value)
-            {
-                CheckForModifiedMercenaries();
-            }
-        }
-        */
         private void BShowTools_Click(object sender, RoutedEventArgs e)
         {
             toolsFlyout.IsOpen = true;
@@ -1407,6 +1426,7 @@ namespace Frankensteiner
         }
         #endregion
 
+        #region Keybind Handler
         private void LbCharacterList_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if(Properties.Settings.Default.cfgShortcutsEnabled)
@@ -1572,5 +1592,6 @@ namespace Frankensteiner
                 CheckForModifiedMercenaries();
             }
         }
+        #endregion
     }
 }

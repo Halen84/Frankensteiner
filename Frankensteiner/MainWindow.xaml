@@ -62,8 +62,8 @@
                                         <Separator/>
                                         <MenuItem x:Name="lbContextQuickFrankenstein" Header="Frankenstein" Click="LbContextQuickFrankenstein_Click"/>
                                         <MenuItem x:Name="lbContextQuickRandomize" Header="Randomize" Click="LbContextQuickRandomize_Click"/>
-                                        <!--<Separator/>
-                                        <TextBox Name="lbChangeCategory" Controls:TextBoxHelper.Watermark="Change Folder" IsTabStop="True" ToolTip="(Non functioning in Mordhau)" TextChanged="lbChangeCategory_TextChanged"/>-->
+                                        <Separator/>
+                                        <TextBox Name="lbChangeCategory" Controls:TextBoxHelper.Watermark="Change Category" IsTabStop="True" TextChanged="lbChangeCategory_TextChanged"/>
                                     </MenuItem>
                                     <MenuItem x:Name="lbContextSave" Header="Save Changes to Mercenary" IsEnabled="False" FontSize="12" Click="LbContextSave_Click"/>
                                     <MenuItem x:Name="lbContextRevert" Header="Revert Changes to Mercenary" IsEnabled="False" FontSize="12" Click="LbContextRevert_Click"/>

@@ -132,6 +132,7 @@ namespace Frankensteiner
             set => SetField(ref _categoryString, value);
         }
         #endregion
+
         // Logic Fields
         public int index = 0;
         public bool isImportedMercenary = false;
@@ -145,6 +146,7 @@ namespace Frankensteiner
         {
 
         }
+
         public MercenaryItem(string originalCode)
         {
             OriginalEntry = originalCode;
@@ -168,13 +170,13 @@ namespace Frankensteiner
                 return false;
             }
         }
+
         public bool ValidateMercenaryCode()
         {
             // This is just a nasty copy and paste because I'm lazy. See ConfigParser.cs for info
             try
             {
                 Regex rx = new Regex("\"(.*?)\"");
-                Regex invalid = new Regex("\".+\""); // In case mercenary loses a closing quote
                 if (rx.IsMatch(OriginalEntry))
                 {
                     Name = rx.Match(OriginalEntry).Value.Replace("\"", "");
@@ -192,12 +194,15 @@ namespace Frankensteiner
                         SkillString = rx.Match(OriginalEntry).Value.Replace("),", ")");
                         rx = new Regex(@"Category=.+\)");
                         CategoryString = rx.Match(OriginalEntry).Value.Replace(")", "");
-                        if (ParseFaceValues() && Name != invalid.Match(OriginalEntry).Value.Replace("\"", ""))
+                        if (ParseFaceValues())
                         {
-                            return true;
-                        } else if (ParseFaceValues() && Name == invalid.Match(OriginalEntry).Value.Replace("\"", "")) {
-                            MessageBox.Show("Frankensteiner lost a closing quote while trying to validate a mercenary! Make sure you have double quotes around the mercenary name and category!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            return false;
+                          if (!Name.Contains(GearString))
+                          {
+                              return true;
+                          } else {
+                              MessageBox.Show("Frankensteiner lost a closing quote while trying to validate a mercenary!\n\nMake sure you have double quotes around the mercenary name and category via mercenary code!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                              return false;
+                          }
                         } else {
                             return false;
                         }
@@ -228,6 +233,7 @@ namespace Frankensteiner
                 return false;
             }
         }
+
         public void UpdateItemText()
         {
             // Imported Mercenaries
@@ -286,6 +292,7 @@ namespace Frankensteiner
                 }
             }*/
         }
+
         public void SetAsOriginal()
         {
             OriginalName = Name;
@@ -298,6 +305,7 @@ namespace Frankensteiner
             isOriginal = true;
             UpdateItemText();
         }
+
         public void RevertCurrentChanges()
         {
             Name = OriginalName;
@@ -306,6 +314,7 @@ namespace Frankensteiner
             isOriginal = true;
             UpdateItemText();
         }
+
         public void Frankenstein()
         {
             Random rnd = new Random(Guid.NewGuid().GetHashCode());
@@ -316,6 +325,7 @@ namespace Frankensteiner
             isOriginal = false;
             UpdateItemText();
         }
+
         public void Randomize()
         {
             Random rnd = new Random(Guid.NewGuid().GetHashCode());

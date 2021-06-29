@@ -56,19 +56,26 @@ namespace Frankensteiner
                     parsedMercenaries.Add(horde.Match(tbMercenaryCode.Text).Value);
                 }
 
-                foreach (string parsedMercenary in parsedMercenaries)
+                foreach (string merc in parsedMercenaries)
                 {
-                    MercenaryItem mercenary = new MercenaryItem(parsedMercenary);
+                    MercenaryItem mercenary = new MercenaryItem(merc);
                     if (mercenary.ValidateMercenaryCode())
                     {
-                        _mercenaryList.Add(mercenary);
-                        bSave.IsEnabled = true;
+                        if (!mainWindow.CheckMercenaryName(mercenary.Name) || mercenary.isHordeMercenary)
+                        {
+                            _mercenaryList.Add(mercenary);
+                            bSave.IsEnabled = true;
+                        } else {
+                            _invalidMercs.Add(mercenary);
+                            MessageBox.Show(String.Format("A mercenary with the name \"{0}\" already exists!\nThis mercenary will not be imported.", mercenary.Name), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
                     }
                     else
                     {
                         _invalidMercs.Add(mercenary);
                     }
                 }
+
                 _mercenaryList.Reverse(); // Reverse the list so it appears in the order it was pasted in
                 if (_mercenaryList.Count == 0 && _invalidMercs.Count == 0)
                 {
@@ -109,10 +116,10 @@ namespace Frankensteiner
         // Force revalidation of merc code after editing
         private void tbMercenaryCode_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox text = sender as TextBox;
-            if (string.IsNullOrWhiteSpace(text.Text))
+            TextBox textBox = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(textBox.Text))
             {
-                text.Text = string.Empty;
+                textBox.Text = string.Empty;
             }
 
             if (bSave.IsEnabled)

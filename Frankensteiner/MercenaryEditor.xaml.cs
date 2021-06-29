@@ -21,6 +21,7 @@ namespace Frankensteiner
     /// </summary>
     public partial class MercenaryEditor : MetroWindow
     {
+        private MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
         private ObservableCollection<FaceValueSliderItem> _sliders = new ObservableCollection<FaceValueSliderItem>();
         private MercenaryItem mercenary;
 
@@ -42,14 +43,20 @@ namespace Frankensteiner
             }
             #endregion
 
+            #region Note from TuffyTown
+            // I had a talk with marox, and he said that some of the bones are just "virtual parents" and don't do anything.
+            // "They're virtual groupings of bones that don't otherwise exist"
+            // I've tested these unknown values for quite some time, and have come to the conclusion that they're all "virtual parents"
+            #endregion
+
             string[] boneNames =
-                {"Mouth - Middle", "Mouth - Edges", "Maxilla", "Left Eyebrow", "Unknown Value [1]", "Right Eyebrow", "Right Eye",
-                "Unknown Value [2]", "Unknown Value [3]", "Unknown Value [4]", "Mouth", "Left Eye", "Lips - Left Edge", "Lips - Right Edge",
-                "Chin", "Jaw - Left", "Jaw - Right", "Lower Lip", "Lower Lip - Left", "Lower Lip - Right", "Infraorbital Margin - Left",
-                "Medial Cleft", "Upper Lip - Left", "Upper Lip - Right", "Philtrum", "Nose - Tip", "Nose Bridge", "Nose Bridge - Top",
+                {"Mouth - Middle", "Mouth - Edges", "Maxilla", "Left Eyebrow", "Virtual Parent", "Right Eyebrow", "Right Eye",
+                "Virtual Parent", "Virtual Parent", "Virtual Parent", "Mouth", "Left Eye", "Lips - Left Edge", "Lips - Right Edge",
+                "Chin", "Jaw - Left", "Jaw - Right", "Lower Lip - Middle", "Lower Lip - Left", "Lower Lip - Right", "Infraorbital Margin - Left",
+                "Upper Lip - Middle", "Upper Lip - Left", "Upper Lip - Right", "Philtrum", "Nose - Tip", "Nose Bridge", "Nose Bridge - Top",
                 "Infraorbital Margin - Right", "Cheek - Left", "Cheek - Right", "Left Eyebrow - Inner", "Right Eyebrow - Inner", "Left Eyebrow - Middle", "Right Eyebrow - Middle",
-                "Left Eyebrow - Outter", "Right Eyebrow - Outter", "Ear - Left", "Ear - Right", "Unknown Value [5]", "Unknown Value [6]", "Left Eyelid - Top",
-                "Left Eyelid - Bottom", "Unknown Value [7]", "Unknown Value [8]", "Right Eyelid - Top", "Right Eyelid - Bottom", "Cheekbone - Left", "Cheekbone - Right"};
+                "Left Eyebrow - Outter", "Right Eyebrow - Outter", "Ear - Left", "Ear - Right", "Virtual Parent", "Virtual Parent", "Left Eyelid - Top",
+                "Left Eyelid - Bottom", "Virtual Parent", "Virtual Parent", "Right Eyelid - Top", "Right Eyelid - Bottom", "Cheekbone - Left", "Cheekbone - Right"};
 
             // Create 49 sliders, it consists of 3 separate sliders - one for each value
             dgValueList.ItemsSource = _sliders;
@@ -126,12 +133,15 @@ namespace Frankensteiner
                 mercenary.FaceValues[i] = new MercenaryItem.FaceValue(Convert.ToUInt16(faceSlider.Translation), Convert.ToUInt16(faceSlider.Rotation), Convert.ToUInt16(faceSlider.Scale));
             }
 
-            //mercenary.Name = (!String.IsNullOrWhiteSpace(tbNewName.Text)) ? tbNewName.Text : mercenary.Name;
             if (tbNewName.Text != null)
             {
-                string stripped = tbNewName.Text.Replace("\"", "");
-                mercenary.Name = String.IsNullOrWhiteSpace(stripped) ? mercenary.Name : stripped;
+                string stripped = tbNewName.Text.Replace("\"", ""); // If name contains double quotes, remove them
+                if (!mainWindow.CheckMercenaryName(stripped))
+                {
+                    mercenary.Name = String.IsNullOrWhiteSpace(stripped) ? mercenary.Name : stripped;
+                }
             }
+
             if(mercenary.Name == mercenary.OriginalName)
             {
                 if (!mercenary.OriginalFaceValues.SequenceEqual(mercenary.FaceValues))
