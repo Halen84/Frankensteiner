@@ -67,7 +67,7 @@ namespace Frankensteiner
                             bSave.IsEnabled = true;
                         } else {
                             _invalidMercs.Add(mercenary);
-                            MessageBox.Show(String.Format("A mercenary with the name \"{0}\" already exists!\nThis mercenary will not be imported.", mercenary.Name), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show($"A mercenary with the name \"{mercenary.Name}\" already exists!\nThis mercenary will not be imported.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
                     else
@@ -82,7 +82,7 @@ namespace Frankensteiner
                     MessageBox.Show("Invalid mercenary code! Make sure you copied the code correctly and try again.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 } else
                 {
-                    MessageBox.Show(String.Format("{0} mercenaries successfully validated!\n\n{1} mercenaries failed to validate!", _mercenaryList.Count, _invalidMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"{_mercenaryList.Count.ToString()} mercenaries successfully validated!\n\n{_invalidMercs.Count.ToString()} mercenaries failed to validate!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
@@ -102,7 +102,7 @@ namespace Frankensteiner
         {
             foreach (MercenaryItem mercenary in _mercenaryList)
             {
-                mercenary.ItemText = String.Format("{0} - Unsaved Imported Mercenary!", mercenary.Name);
+                mercenary.ItemText = $"{mercenary.Name} - Unsaved Imported Mercenary!";
                 SolidColorBrush newColor = (Properties.Settings.Default.appTheme == "Dark") ? new SolidColorBrush(Color.FromRgb(69, 69, 69)) : new SolidColorBrush(Color.FromRgb(245, 245, 245));
                 mercenary.BackgroundColour = newColor;
                 mercenary.isOriginal = true;

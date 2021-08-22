@@ -6,7 +6,7 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:Frankensteiner"
         mc:Ignorable="d"
-        Title="Mercenary Importer" Height="300" Width="600" MinHeight="300" MinWidth="600" WindowStartupLocation="CenterOwner" TitleCaps="False">
+        Title="Mercenary Importer" Height="300" Width="600" MinHeight="300" MinWidth="600" WindowStartupLocation="CenterOwner" TitleCharacterCasing="Normal">
     <Grid>
         <TextBox x:Name="tbMercenaryCode" Margin="10,10,10,72" TextWrapping="NoWrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Controls:TextBoxHelper.Watermark="Paste mercenary code here. Each mercenary must go on a new line." TextChanged="tbMercenaryCode_TextChanged"/>
         <Button x:Name="bValidate" Content="Validate" Margin="10,0,10,40" VerticalAlignment="Bottom" Controls:ControlsHelper.ContentCharacterCasing="Normal" Click="BValidate_Click"/>

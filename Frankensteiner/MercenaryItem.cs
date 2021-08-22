@@ -166,7 +166,7 @@ namespace Frankensteiner
                 }
                 return true;
             } else {
-                MessageBox.Show(String.Format("Unable to process face values for \"{0}\".\n\nCount mismatch. Expected a total of 147 values, got {1}.", Name, rxMatches.Count), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Unable to process face values for \"{Name}\".\n\nCount mismatch. Expected a total of 147 values, got {rxMatches.Count.ToString()}.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
         }

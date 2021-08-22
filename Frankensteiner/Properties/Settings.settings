@@ -6,7 +6,7 @@
       <Value Profile="(Default)">Dark</Value>
     </Setting>
     <Setting Name="appAccent" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Blue</Value>
+      <Value Profile="(Default)">Cyan</Value>
     </Setting>
     <Setting Name="appStartupPos" Type="System.Drawing.Point" Scope="User">
       <Value Profile="(Default)">0, 0</Value>

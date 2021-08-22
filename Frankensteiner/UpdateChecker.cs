@@ -51,7 +51,7 @@ namespace Frankensteiner
                 }
                 else
                 {
-                    var result = MessageBox.Show("Failed to fetch latest update. Retry?", "Frankensteiner", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+                    DialogResult result = MessageBox.Show("Failed to fetch latest update. Retry?", "Frankensteiner", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
                     if (result == DialogResult.Retry)
                     {
                         CheckLatestVersion(Timeout);
@@ -63,14 +63,14 @@ namespace Frankensteiner
 
                 }
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 if (MessageBox.Show("Failed to fetch latest update. Retry?", "Frankensteiner", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Retry)
                 {
                     CheckLatestVersion(Timeout);
                 }
             }
-            catch (ThreadInterruptedException ex)
+            catch (ThreadInterruptedException)
             {
                 if (MessageBox.Show("Failed to fetch latest update. Retry?", "Frankensteiner", MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning) == DialogResult.Retry)
                 {
@@ -92,7 +92,7 @@ namespace Frankensteiner
                 string version = client.DownloadString(url);
                 latestVersion = version.Trim();
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 // I should probably add a retry here too but idk
                 MessageBox.Show("Failed to fetch update version.", "Frankensteiner", MessageBoxButtons.OK, MessageBoxIcon.Error);

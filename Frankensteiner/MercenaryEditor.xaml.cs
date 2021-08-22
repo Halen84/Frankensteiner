@@ -1,18 +1,10 @@
-﻿using MahApps.Metro;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Frankensteiner
 {
@@ -32,8 +24,7 @@ namespace Frankensteiner
 
             Owner = Application.Current.MainWindow; // Set MainWindow as owner, so it'll make proper use of WindowStartupLocation.Owner
             #region Update colours to fit the active theme + alternating colors for readability
-            Tuple<AppTheme, Accent> appStyle = ThemeManager.DetectAppStyle(Application.Current);
-            if(appStyle.Item1.Name == "BaseDark")
+            if (Properties.Settings.Default.appTheme == "Dark")
             {
                 gBackground.Background = new SolidColorBrush(Color.FromRgb(55, 55, 55));
                 dgValueList.AlternatingRowBackground = new SolidColorBrush(Color.FromRgb(55, 55, 55));
@@ -66,7 +57,7 @@ namespace Frankensteiner
                 newSlider.Translation = selectedMerc.FaceValues[i].Translation;
                 newSlider.Rotation = selectedMerc.FaceValues[i].Rotation;
                 newSlider.Scale = selectedMerc.FaceValues[i].Scale;
-                newSlider.UpdateDescription(string.Format(boneNames[i]));
+                newSlider.UpdateDescription(boneNames[i]);
                 _sliders.Add(newSlider);
             }
             tbNewName.IsEnabled = !mercenary.isHordeMercenary;

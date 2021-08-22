@@ -1,4 +1,4 @@
-﻿using MahApps.Metro;
+﻿using ControlzEx.Theming;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -8,21 +8,13 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 
 namespace Frankensteiner
@@ -105,25 +97,25 @@ namespace Frankensteiner
 
             #region Fetch Settings
             // ZIP Backup
-            cbZipBackup.IsChecked = Properties.Settings.Default.cfgZIPBackup;
+            cfgZIPBackup.IsChecked = Properties.Settings.Default.cfgZIPBackup;
             // ZIP Limiter
             nudZipLimit.Value = Properties.Settings.Default.cfgZIPLimit;
             // ZIP Limit Active
-            cbLimitZipSize.IsChecked = Properties.Settings.Default.cfgZIPLimitActive;
+            cfgZIPLimitActive.IsChecked = Properties.Settings.Default.cfgZIPLimitActive;
             // Disable Startup Movies
             cbDisableMovies.IsChecked = Properties.Settings.Default.cfgDisableMovies;
             // Check Conflcits
-            cbCheckConflicts.IsChecked = Properties.Settings.Default.cfgCheckConflict;
+            cfgCheckConflict.IsChecked = Properties.Settings.Default.cfgCheckConflict;
             // Conflict Warnings
-            cbConflictWarnings.IsChecked = Properties.Settings.Default.cfgConflictWarnings;
+            cfgConflictWarnings.IsChecked = Properties.Settings.Default.cfgConflictWarnings;
             // Auto Restart Mordhau
             cbAutoCloseGame.IsChecked = Properties.Settings.Default.cfgAutoClose;
-            cbRestartMordhau.IsChecked = Properties.Settings.Default.cfgRestartMordhau;
-            cbRestartMordhauMode.IsChecked = Properties.Settings.Default.cfgRestartMordhauMode;
+            cfgRestartMordhau.IsChecked = Properties.Settings.Default.cfgRestartMordhau;
+            cfgRestartMordhauMode.IsChecked = Properties.Settings.Default.cfgRestartMordhauMode;
             // Shortcuts
-            cbShortcutKeys.IsChecked = Properties.Settings.Default.cfgShortcutsEnabled;
+            cfgShortcutsEnabled.IsChecked = Properties.Settings.Default.cfgShortcutsEnabled;
             // Check for updates
-            cbUpdateOnStartup.IsChecked = Properties.Settings.Default.cfgUpdateOnStartup;
+            cfgUpdateOnStartup.IsChecked = Properties.Settings.Default.cfgUpdateOnStartup;
             #endregion
 
             #region Set Application Theme & Accent
@@ -133,16 +125,16 @@ namespace Frankensteiner
                 cbAppAccents.SelectedItem = cbAppAccents.Items.OfType<ComboBoxItem>().FirstOrDefault(x => x.Content.ToString() == Properties.Settings.Default.appAccent);
                 if (appThemes.Contains(Properties.Settings.Default.appTheme) && appAccents.Contains(Properties.Settings.Default.appAccent))
                 {
-                    ThemeManager.ChangeAppStyle(System.Windows.Application.Current, ThemeManager.GetAccent(Properties.Settings.Default.appAccent), ThemeManager.GetAppTheme("Base" + Properties.Settings.Default.appTheme));
+                    ThemeManager.Current.ChangeTheme(System.Windows.Application.Current, Properties.Settings.Default.appTheme + "." + Properties.Settings.Default.appAccent);
                 } else {
-                    ThemeManager.ChangeAppStyle(System.Windows.Application.Current, ThemeManager.GetAccent("Blue"), ThemeManager.GetAppTheme("BaseDark"));
-                    Properties.Settings.Default.appTheme = "BaseDark";
-                    Properties.Settings.Default.appAccent = "Blue";
+                    ThemeManager.Current.ChangeTheme(System.Windows.Application.Current, "Dark.Cyan");
+                    Properties.Settings.Default.appTheme = "Dark";
+                    Properties.Settings.Default.appAccent = "Cyan";
                     Properties.Settings.Default.Save();
-                    System.Windows.MessageBox.Show("Application was unable to set the theme and/or accent! Setting default style instead.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    System.Windows.MessageBox.Show("Frankensteiner was unable to set the app theme. Default style has been applied instead.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             } catch (Exception eggseption) {
-                System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to update the applications theme/accent! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(String.Format("An error occured while trying to set the app theme. Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             #endregion
 
@@ -168,7 +160,7 @@ namespace Frankensteiner
             #endregion
 
             #region Version Stuff
-            runVersion.Text = String.Format("{0} | Made by Dealman | Maintained by TuffyTown", updater.Version);
+            runVersion.Text = $"{updater.Version} | Made by Dealman | Maintained by TuffyTown";
             if (Properties.Settings.Default.cfgUpdateOnStartup == true)
             {
                 updater.CheckLatestVersion(updater.Timeout, false);
@@ -201,7 +193,7 @@ namespace Frankensteiner
         private void CbAppThemes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBoxItem cbi = (ComboBoxItem)cbAppThemes.SelectedItem;
-            ThemeManager.ChangeAppTheme(System.Windows.Application.Current, "Base" + cbi.Content);
+            ThemeManager.Current.ChangeTheme(System.Windows.Application.Current, cbi.Content.ToString() + "." + Properties.Settings.Default.appAccent);
             Properties.Settings.Default.appTheme = cbi.Content.ToString();
             Properties.Settings.Default.Save();
             UpdateGridBackgrounds();
@@ -215,8 +207,7 @@ namespace Frankensteiner
         private void CbAppAccents_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBoxItem cbi = (ComboBoxItem)cbAppAccents.SelectedItem;
-            Tuple<AppTheme, Accent> appStyle = ThemeManager.DetectAppStyle(System.Windows.Application.Current);
-            ThemeManager.ChangeAppStyle(System.Windows.Application.Current, ThemeManager.GetAccent(cbi.Content.ToString()), appStyle.Item1);
+            ThemeManager.Current.ChangeTheme(System.Windows.Application.Current, Properties.Settings.Default.appTheme + "." + cbi.Content.ToString());
             Properties.Settings.Default.appAccent = cbi.Content.ToString();
             Properties.Settings.Default.Save();
             UpdateGridBackgrounds();
@@ -241,7 +232,7 @@ namespace Frankensteiner
 
             if (bTitleSave.IsVisible == true)
             {
-                var response = System.Windows.Forms.MessageBox.Show(String.Format("Warning!\n\nYou have {0} unsaved mercenaries!\n\nWould you like to save them before exiting?", _modifiedMercs.Count), "Frankensteiner", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                DialogResult response = System.Windows.Forms.MessageBox.Show($"Warning!\n\nYou have {_modifiedMercs.Count.ToString()} unsaved mercenaries!\n\nWould you like to save them before exiting?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 if (response == System.Windows.Forms.DialogResult.Yes)
                 {
                     SaveAllMercenaries(_modifiedMercs);
@@ -308,7 +299,7 @@ namespace Frankensteiner
                 if (selectedMerc != null)
                 {
                     MercenaryEditor mercEditor = new MercenaryEditor(selectedMerc);
-                    mercEditor.Title = String.Format("Mercenary Editor - Editing {0}", selectedMerc.Name);
+                    mercEditor.Title = $"Mercenary Editor - Editing {selectedMerc.Name}";
                     if (mercEditor.ShowDialog().Value)
                     {
                         // TODO: Check for changes here, if yes, enable titlebar save
@@ -329,7 +320,7 @@ namespace Frankensteiner
         {
             try
             {
-                if (Properties.Settings.Default.cfgNormalBackup && cbNormalBackup.IsChecked.Value)
+                if (Properties.Settings.Default.cfgNormalBackup && cfgNormalBackup.IsChecked.Value)
                 {
                     if (Properties.Settings.Default.cfgBackupPath != Properties.Settings.Default.cfgConfigPath)
                     {
@@ -339,7 +330,7 @@ namespace Frankensteiner
                     }
                 }
             } catch (Exception eggseption) {
-                System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to write to config. Do not worry, nothing was actually writen to the config file yet! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(String.Format("An error occured whilst trying to write to the config file. Do not worry, nothing was written to the file! Error Message:\n\n{0}", eggseption.Message.ToString()), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -347,13 +338,13 @@ namespace Frankensteiner
         {
             try
             {
-                if (Properties.Settings.Default.cfgZIPBackup && cbZipBackup.IsChecked.Value)
+                if (Properties.Settings.Default.cfgZIPBackup && cfgZIPBackup.IsChecked.Value)
                 {
                     if (File.Exists(Properties.Settings.Default.cfgBackupPath + @"\FrankensteinerBackups.zip"))
                     {
                         using (ZipArchive zip = ZipFile.Open(Properties.Settings.Default.cfgBackupPath + @"\FrankensteinerBackups.zip", ZipArchiveMode.Update))
                         {
-                            if (cbLimitZipSize.IsChecked.Value && (int)nudZipLimit.Value > 0)
+                            if (cfgZIPLimitActive.IsChecked.Value && (int)nudZipLimit.Value > 0)
                             {
                                 IReadOnlyCollection<ZipArchiveEntry> zipEntries = zip.Entries;
                                 if (zipEntries.Count >= nudZipLimit.Value)
@@ -455,7 +446,7 @@ namespace Frankensteiner
                     KillMordhau();
                     wasMordhauKilled = true;
                 } else {
-                    var response = System.Windows.Forms.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting your changes when you close it.\n\nWould you like to close Mordhau before proceeding?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    DialogResult response = System.Windows.Forms.MessageBox.Show("Mordhau is running! Saving now may result in Mordhau overwriting your changes when you close it.\n\nWould you like to close Mordhau before proceeding?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                     if (response == System.Windows.Forms.DialogResult.Yes)
                     {
                         KillMordhau();
@@ -480,7 +471,7 @@ namespace Frankensteiner
 
             if(_deleteMercs.Count > 0)
             {
-                if(System.Windows.MessageBox.Show(String.Format("Warning!\n\n {0} mercenaries will be deleted!\n\nThis action can not be undone! Are you sure you want to proceed?", _deleteMercs.Count), "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes) // string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())
+                if(System.Windows.MessageBox.Show($"Warning!\n\n {_deleteMercs.Count.ToString()} mercenaries will be deleted!\n\nThis action cannot be undone! Are you sure you want to proceed?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes) // string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())
                 {
                     for (int i = 0; i < _deleteMercs.Count; i++)
                     {
@@ -597,7 +588,7 @@ namespace Frankensteiner
                         {
                             _loadedMercenaries.Remove(_deleteMercs[i]);
                         } else {
-                            System.Windows.MessageBox.Show(String.Format("Unable to delete mercenary {0}. Original entry was not found in the config!", _deleteMercs[i].Name), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            System.Windows.MessageBox.Show($"Unable to delete mercenary {_deleteMercs[i].Name}. Original entry was not found in the config!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
                 }
@@ -615,9 +606,9 @@ namespace Frankensteiner
                 File.WriteAllText(gameConfigPath, configContents);
                 if(_validMercs.Count > 0 && _deleteMercs.Count == 0)
                 {
-                    System.Windows.MessageBox.Show(String.Format("Successfully saved {0} mercenaries!", _validMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information); // string.Join("\n", _validMercs.Select(x => x.Name).ToArray())
+                    System.Windows.MessageBox.Show($"Successfully saved {_validMercs.Count.ToString()} mercenaries!", "Information", MessageBoxButton.OK, MessageBoxImage.Information); // string.Join("\n", _validMercs.Select(x => x.Name).ToArray())
                 } else if(_validMercs.Count == 0 && _deleteMercs.Count > 0) {
-                    System.Windows.MessageBox.Show(String.Format("Successfully deleted {0} mercenaries!", _deleteMercs.Count), "Information", MessageBoxButton.OK, MessageBoxImage.Information); // string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())
+                    System.Windows.MessageBox.Show($"Successfully deleted {_deleteMercs.Count.ToString()} mercenaries!", "Information", MessageBoxButton.OK, MessageBoxImage.Information); // string.Join("\n", _deleteMercs.Select(x => x.Name).ToArray())
                 }
                 bTitleSave.Visibility = Visibility.Collapsed;
             }
@@ -631,9 +622,9 @@ namespace Frankensteiner
             #endregion
 
             #region Auto Restart Mordhau
-            if (Properties.Settings.Default.cfgRestartMordhau && cbRestartMordhau.IsChecked.Value)
+            if (Properties.Settings.Default.cfgRestartMordhau && cfgRestartMordhau.IsChecked.Value)
             {
-                if (Properties.Settings.Default.cfgRestartMordhauMode && cbRestartMordhauMode.IsChecked.Value)
+                if (Properties.Settings.Default.cfgRestartMordhauMode && cfgRestartMordhauMode.IsChecked.Value)
                 {
                     if (wasMordhauKilled)
                     {
@@ -648,7 +639,7 @@ namespace Frankensteiner
                             {
                                 System.Windows.MessageBox.Show("Did not restart Mordhau because the path is not set.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                             } else {
-                                System.Windows.MessageBox.Show(String.Format("Unable to restart Mordhau. Path searched:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                System.Windows.MessageBox.Show($"Unable to restart Mordhau. Path searched:\n\n{mordhauExe}", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                             }
                         }
                     }
@@ -666,7 +657,7 @@ namespace Frankensteiner
                         {
                             System.Windows.MessageBox.Show("Did not restart Mordhau because the path is not set.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         } else {
-                            System.Windows.MessageBox.Show(String.Format("Unable to restart Mordhau. Path searched:\n\n{0}", mordhauExe), "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            System.Windows.MessageBox.Show($"Unable to restart Mordhau. Path searched:\n\n{mordhauExe}", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
                 }
@@ -801,11 +792,16 @@ namespace Frankensteiner
 
         private void CreateMercenary(string name, int faceType, bool isMassCreation)
         {
-            // TODO: Prevent duplicate names here too
             if (!String.IsNullOrWhiteSpace(name))
             {
+                if (CheckMercenaryName(name) && !isMassCreation)
+                {
+                    System.Windows.MessageBox.Show($"A mercenary with the name \"{name}\" already exists!\nPlease choose a different name.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 // 0 = Default, 1 = Random, 2 = Frankenstein
-                string defaultCode = String.Format("CharacterProfiles=(Name=INVTEXT(\"{0}\"),GearCustomization=(Wearables=((),(),(ID=30),(),(),(),(),(ID=15),(ID=8)),Equipment=((),(),())),AppearanceCustomization=(Emblem=0,EmblemColors=(0,0),MetalRoughnessScale=0,MetalTint=0,Age=0,Voice=2,VoicePitch=157,bIsFemale=False,Fat=85,Skinny=85,Strong=85,SkinColor=0,Face=0,EyeColor=0,HairColor=0,Hair=0,FacialHair=0,Eyebrows=0),FaceCustomization=(Translate=(15360,15360,15840,12656,15364,12653,15862,0,15385,0,16320,15847,15855,15855,384,8690,8683,480,480,480,31700,480,480,480,15360,15840,18144,15840,31690,15850,15860,11471,11471,12463,12463,11471,11471,15840,15840,0,0,0,0,0,0,0,0,7665,7660),Rotate=(0,0,0,0,0,0,16,0,0,0,0,14,0,0,12288,591,367,0,15855,15855,18976,0,0,0,0,18432,0,0,18816,0,0,0,0,0,0,0,0,655,335,0,0,15840,15840,0,0,15840,15840,0,0),Scale=(14351,14351,0,15360,0,15360,0,15855,0,15855,14336,0,0,0,14350,0,0,15855,15855,15855,15840,0,15855,15855,0,15914,6,0,15840,0,0,0,0,0,0,0,0,15855,15855,0,0,0,0,0,0,0,0,0,0)),SkillsCustomization=(Perks=0),Category=\"\")", name);
+                string defaultCode = $"CharacterProfiles=(Name=INVTEXT(\"{name}\"),GearCustomization=(Wearables=((),(),(ID=30),(),(),(),(),(ID=15),(ID=8)),Equipment=((),(),())),AppearanceCustomization=(Emblem=0,EmblemColors=(0,0),MetalRoughnessScale=0,MetalTint=0,Age=0,Voice=2,VoicePitch=157,bIsFemale=False,Fat=85,Skinny=85,Strong=85,SkinColor=0,Face=0,EyeColor=0,HairColor=0,Hair=0,FacialHair=0,Eyebrows=0),FaceCustomization=(Translate=(15360,15360,15840,12656,15364,12653,15862,0,15385,0,16320,15847,15855,15855,384,8690,8683,480,480,480,31700,480,480,480,15360,15840,18144,15840,31690,15850,15860,11471,11471,12463,12463,11471,11471,15840,15840,0,0,0,0,0,0,0,0,7665,7660),Rotate=(0,0,0,0,0,0,16,0,0,0,0,14,0,0,12288,591,367,0,15855,15855,18976,0,0,0,0,18432,0,0,18816,0,0,0,0,0,0,0,0,655,335,0,0,15840,15840,0,0,15840,15840,0,0),Scale=(14351,14351,0,15360,0,15360,0,15855,0,15855,14336,0,0,0,14350,0,0,15855,15855,15855,15840,0,15855,15855,0,15914,6,0,15840,0,0,0,0,0,0,0,0,15855,15855,0,0,0,0,0,0,0,0,0,0)),SkillsCustomization=(Perks=0),Category=\"\")";
                 MercenaryItem newMercenary = new MercenaryItem(defaultCode);
                 if (newMercenary.ValidateMercenaryCode())
                 {
@@ -824,7 +820,7 @@ namespace Frankensteiner
                     tbMercenaryName.Text = "";
                     if (!isMassCreation)
                     {
-                        System.Windows.MessageBox.Show(String.Format("Successfully created {0}", newMercenary.Name), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        System.Windows.MessageBox.Show($"Successfully created {newMercenary.Name}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     CheckForModifiedMercenaries();
                 }
@@ -959,8 +955,8 @@ namespace Frankensteiner
             {
                 if(Directory.Exists(tbBackupPath.Text))
                 {
-                    cbNormalBackup.IsEnabled = true;
-                    cbZipBackup.IsEnabled = true;
+                    cfgNormalBackup.IsEnabled = true;
+                    cfgZIPBackup.IsEnabled = true;
                 }
             }
         }
@@ -1034,18 +1030,6 @@ namespace Frankensteiner
         #endregion
 
         #region CheckBox Events
-        private void CbNormalBackup_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgNormalBackup = cbNormalBackup.IsChecked.Value;
-        }
-        private void CbZipBackup_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgZIPBackup = cbZipBackup.IsChecked.Value;
-        }
-        private void CbLimitZipSize_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgZIPLimitActive = cbLimitZipSize.IsChecked.Value;
-        }
         private void CbDisableMovies_Click(object sender, RoutedEventArgs e)
         {
             ToggleStartupMovies(cbDisableMovies.IsChecked.Value);
@@ -1053,32 +1037,13 @@ namespace Frankensteiner
         private void CbAutoCloseGame_Click(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.cfgAutoClose = cbAutoCloseGame.IsChecked.Value;
-            cbRestartMordhau.IsEnabled = cbAutoCloseGame.IsChecked.Value;
-            cbRestartMordhauMode.IsEnabled = cbAutoCloseGame.IsChecked.Value;
+            cfgRestartMordhau.IsEnabled = cbAutoCloseGame.IsChecked.Value;
+            cfgRestartMordhauMode.IsEnabled = cbAutoCloseGame.IsChecked.Value;
         }
-        private void CbCheckConflicts_Click(object sender, RoutedEventArgs e)
+        private void CbCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.cfgCheckConflict = cbCheckConflicts.IsChecked.Value;
-        }
-        private void CbConflictWarnings_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgConflictWarnings = cbConflictWarnings.IsChecked.Value;
-        }
-        private void CbRestartMordhau_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgRestartMordhau = cbRestartMordhau.IsChecked.Value;
-        }
-        private void CbRestartMordhauMode_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgRestartMordhauMode = cbRestartMordhauMode.IsChecked.Value;
-        }
-        private void CbShortcutKeys_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgShortcutsEnabled = cbShortcutKeys.IsChecked.Value;
-        }
-        private void CbUpdateOnStartup_Click(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.cfgUpdateOnStartup = cbUpdateOnStartup.IsChecked.Value;
+            System.Windows.Controls.CheckBox checkBox = sender as System.Windows.Controls.CheckBox;
+            Properties.Settings.Default[checkBox.Name] = checkBox.IsChecked.Value;
         }
         #endregion
 
@@ -1100,29 +1065,29 @@ namespace Frankensteiner
                         }
                         bool changedOrImported = (!selectedMerc.isOriginal || selectedMerc.isOriginal && selectedMerc.isImportedMercenary) ? true : false;
                         // Edit
-                        UpdateContextItem(lbContextEdit, String.Format("Edit {0}", selectedMerc.Name), true);
-                        UpdateContextItem(lbContextQuickEdit, String.Format("Open {0} in Mercenary Editor", selectedMerc.Name), true);
-                        UpdateContextItem(lbContextQuickFrankenstein, String.Format("Frankenstein {0}", selectedMerc.Name), true);
-                        UpdateContextItem(lbContextQuickRandomize, String.Format("Randomize {0}", selectedMerc.Name), true);
+                        UpdateContextItem(lbContextEdit, $"Edit {selectedMerc.Name}", true);
+                        UpdateContextItem(lbContextQuickEdit, $"Open {selectedMerc.Name} in Mercenary Editor", true);
+                        UpdateContextItem(lbContextQuickFrankenstein, $"Frankenstein {selectedMerc.Name}", true);
+                        UpdateContextItem(lbContextQuickRandomize, $"Randomize {selectedMerc.Name}", true);
                         // Save
-                        UpdateContextItem(lbContextSave, String.Format("Save {0}", selectedMerc.Name), changedOrImported);
+                        UpdateContextItem(lbContextSave, $"Save {selectedMerc.Name}", changedOrImported);
                         // Revert
-                        UpdateContextItem(lbContextRevert, String.Format("Revert {0}", selectedMerc.Name), changedOrImported);
+                        UpdateContextItem(lbContextRevert, $"Revert {selectedMerc.Name}", changedOrImported);
                         // Export
-                        UpdateContextItem(lbContextExport, String.Format("Export {0} to Clipboard", selectedMerc.Name), true);
+                        UpdateContextItem(lbContextExport, $"Export {selectedMerc.Name} to Clipboard", true);
                         // Copy Face
-                        UpdateContextItem(lbContextCopyFace, String.Format("Copy Face Values from {0}", selectedMerc.Name), true);
+                        UpdateContextItem(lbContextCopyFace, $"Copy Face Values from {selectedMerc.Name}", true);
                         UpdateContextItem(lbContextCopyFormat, "Copy Face Values", true);
-                        UpdateContextItem(lbContextCopyHordeFormat, "Copy as Horde Format", true);
+                        UpdateContextItem(lbContextCopyHordeFormat, "Copy Face Values as Horde Format", true);
                         // Paste Face
-                        if(selectedMerc != _copiedMercenary && _copiedMercenary != null)
+                        if (selectedMerc != _copiedMercenary && _copiedMercenary != null)
                         {
-                            UpdateContextItem(lbContextPasteFace, String.Format("Paste Face Values From {0} to {1}", _copiedMercenary.Name, selectedMerc.Name), true);
+                            UpdateContextItem(lbContextPasteFace, $"Paste Face Values From {_copiedMercenary.Name} to {selectedMerc.Name}", true);
                         } else {
-                            UpdateContextItem(lbContextPasteFace, String.Format("No Copied Face Values to Paste", selectedMerc.Name), false);
+                            UpdateContextItem(lbContextPasteFace, "No Copied Face Values to Paste", false);
                         }
                         // Delete
-                        UpdateContextItem(lbContextDelete, String.Format("Mark {0} for Deletion", selectedMerc.Name), true);
+                        UpdateContextItem(lbContextDelete, $"Mark {selectedMerc.Name} for Deletion", true);
 
                         //TODO: Replace with Revert - alert user before
                         //UpdateContextItem(lbContextDelete, String.Format("Delete {0}", selectedMerc.Name), selectedMerc.importedMercenary, Visibility.Visible);
@@ -1183,18 +1148,16 @@ namespace Frankensteiner
         // Context Option: Save
         private void LbContextSave_Click(object sender, RoutedEventArgs e)
         {
-            if(lbCharacterList.SelectedItems.Count == 1)
+            List<MercenaryItem> _modifiedMercs = new List<MercenaryItem>();
+            for (int i = 0; i < lbCharacterList.SelectedItems.Count; i++)
             {
-                MercenaryItem selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
-                if(selectedMerc != null)
+                MercenaryItem _selectedMerc = lbCharacterList.SelectedItems[i] as MercenaryItem;
+                if (_selectedMerc != null)
                 {
-                    List<MercenaryItem> _modifiedMercs = new List<MercenaryItem>();
-                    _modifiedMercs.Add(selectedMerc);
-                    SaveAllMercenaries(_modifiedMercs);
+                    _modifiedMercs.Add(_selectedMerc);
                 }
-            } else if(lbCharacterList.SelectedItems.Count > 1) {
-                SaveAllMercenaries(GetModifiedMercenaries());
             }
+            SaveAllMercenaries(_modifiedMercs);
         }
         // Context Option: Revert
         private void LbContextRevert_Click(object sender, RoutedEventArgs e)
@@ -1206,7 +1169,7 @@ namespace Frankensteiner
                 {
                     if (merc.isImportedMercenary && merc.isOriginal)
                     {
-                        if (System.Windows.MessageBox.Show(String.Format("{0} is an imported mercenary without any changes. Reverting now will delete this mercenary.\n\nAre you sure?", merc.Name), "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        if (System.Windows.MessageBox.Show($"{merc.Name} is an imported mercenary without any changes. Reverting now will delete this mercenary.\n\nAre you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                         {
                             _loadedMercenaries.Remove(merc);
                         }
@@ -1240,7 +1203,7 @@ namespace Frankensteiner
             if (selectedMerc != null)
             {
                 MercenaryEditor mercEditor = new MercenaryEditor(selectedMerc);
-                mercEditor.Title = String.Format("Mercenary Editor - Editing {0}", selectedMerc.Name);
+                mercEditor.Title = $"Mercenary Editor - Editing {selectedMerc.Name}";
                 if (mercEditor.ShowDialog().Value)
                 {
                     CheckForModifiedMercenaries();
@@ -1415,9 +1378,9 @@ namespace Frankensteiner
 
             for (int i = (int)nudMassNumber.Value; i > 0; i--)
             {
-                CreateMercenary(String.Format("MassCreation {0}", (i)), faceType, true);
+                CreateMercenary($"MassCreation {i.ToString()}", faceType, true);
             }
-            System.Windows.MessageBox.Show(String.Format("Successfully mass created {0} mercenaries!", nudMassNumber.Value), "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show($"Successfully mass created {nudMassNumber.Value.ToString()} mercenaries!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void BImportMercs_Click(object sender, RoutedEventArgs e)
         {
@@ -1440,7 +1403,7 @@ namespace Frankensteiner
                         if (_selectedMerc != null)
                         {
                             MercenaryEditor mercEditor = new MercenaryEditor(_selectedMerc);
-                            mercEditor.Title = String.Format("Mercenary Editor - Editing {0}", _selectedMerc.Name);
+                            mercEditor.Title = $"Mercenary Editor - Editing {_selectedMerc.Name}";
                             if (mercEditor.ShowDialog().Value)
                             {
                                 CheckForModifiedMercenaries();
@@ -1456,17 +1419,20 @@ namespace Frankensteiner
                 // Save Keybind
                 if (e.Key == Key.S && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                 {
-                    if (lbCharacterList.SelectedItems.Count == 1)
+                    if (lbCharacterList.SelectedItems.Count == 0 && GetModifiedMercenaries().Count > 0)
                     {
-                        MercenaryItem _selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
-                        if (_selectedMerc != null)
-                        {
-                            List<MercenaryItem> _modifiedMercs = new List<MercenaryItem>();
-                            _modifiedMercs.Add(_selectedMerc);
-                            SaveAllMercenaries(_modifiedMercs);
-                        }
-                    } else if (lbCharacterList.SelectedItems.Count > 1) {
                         SaveAllMercenaries(GetModifiedMercenaries());
+                    } else {
+                        List<MercenaryItem> _modifiedMercs = new List<MercenaryItem>();
+                        for (int i = 0; i < lbCharacterList.SelectedItems.Count; i++)
+                        {
+                            MercenaryItem _selectedMerc = lbCharacterList.SelectedItems[i] as MercenaryItem;
+                            if (_selectedMerc != null)
+                            {
+                                _modifiedMercs.Add(_selectedMerc);
+                            }
+                        }
+                        SaveAllMercenaries(_modifiedMercs);
                     }
                 }
                 // Revert Keybind
@@ -1490,7 +1456,7 @@ namespace Frankensteiner
                             // Imported & Unchanged Mercenary - Delete
                             if (_selectedMerc.isImportedMercenary && _selectedMerc.isOriginal)
                             {
-                                if (System.Windows.MessageBox.Show(String.Format("{0} is an imported mercenary without any changes. Reverting now will delete this mercenary.\n\nAre you sure?", _selectedMerc.Name), "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                                if (System.Windows.MessageBox.Show($"{_selectedMerc.Name} is an imported mercenary without any changes. Reverting now will delete this mercenary.\n\nAre you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                                 {
                                     _loadedMercenaries.Remove(_selectedMerc);
                                 }

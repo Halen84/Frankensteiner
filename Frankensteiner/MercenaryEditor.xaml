@@ -7,7 +7,7 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/shared" x:Name="metroWindow" x:Class="Frankensteiner.MercenaryEditor"
         mc:Ignorable="d"
-        Title="Mercenary Editor - Editing MercenaryName" Height="450" Width="800" TitleCaps="False" WindowStartupLocation="CenterOwner">
+        Title="Mercenary Editor - Editing MercenaryName" Height="450" Width="800" TitleCharacterCasing="Normal" WindowStartupLocation="CenterOwner">
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl Margin="0,30,0,0">
             <Controls:Flyout x:Name="settingsFlyout" Header="Editing Tools" Position="Bottom" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Controls:FlyoutsControl}, Path=ActualHeight}" Opacity="{Binding Value, ElementName=sliderFlyoutOpacity}">

@@ -7,7 +7,7 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:fa="clr-namespace:FontAwesome.Net;assembly=FontAwesome.Net"
         mc:Ignorable="d"
-        Title="Frankensteiner" Height="450" Width="600" TitleCaps="False" MinWidth="600" MinHeight="450" ResizeMode="CanResizeWithGrip" Closing="MetroWindow_Closing">
+        Title="Frankensteiner" Height="450" Width="600" MinWidth="600" MinHeight="450" TitleCharacterCasing="Normal" ResizeMode="CanResizeWithGrip" Closing="MetroWindow_Closing">
     <Controls:MetroWindow.Resources>
         <FontFamily x:Key="FontAwesome">pack://application:,,,/FontAwesome.Net;component/Fonts/#FontAwesome</FontFamily>
     </Controls:MetroWindow.Resources>
@@ -81,7 +81,7 @@
                             </ListBox.ContextMenu>
 
                             <ListBox.Resources>
-                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MetroListBoxItem}">
+                                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
                                     <Setter Property="Content" Value="{Binding Path=ItemText, UpdateSourceTrigger=PropertyChanged}"/>
                                     <!-- Disabled for now, will be colourized in a later version
                                     <Style.Triggers>
@@ -118,25 +118,25 @@
                                 <Label Content="Mordhau Path" Margin="10,96,10,0" VerticalAlignment="Top" Width="520" HorizontalContentAlignment="Center" ToolTip="This is used to disable startup movies and restart Mordhau. Not required."/>
                                 <TextBox x:Name="tbMordhauPath" Margin="10,127,35,0" TextWrapping="Wrap" VerticalAlignment="Top" Controls:TextBoxHelper.Watermark="Browse to Mordhau Directory..." MinWidth="440" IsReadOnly="True" MinHeight="27" Focusable="False" TextChanged="TbMordhauPath_TextChanged"/>
                                 <Button x:Name="bBrowseMordhauPath" Content="..." HorizontalAlignment="Right" Margin="0,127,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" MinWidth="20" Click="BBrowseMordhauPath_Click" MinHeight="27" MouseRightButtonUp="BBrowseMordhauPath_MouseRightButtonUp" ToolTip="Left-click to choose folder. Right-click to open the folder if one has been selected."/>
-                                <CheckBox x:Name="cbCheckConflicts" Content="Automatically Check for Conflicts" Margin="10,73,10,0" VerticalAlignment="Top" Click="CbCheckConflicts_Click"/>
+                                <CheckBox x:Name="cfgCheckConflict" Content="Automatically Check for Conflicts" Margin="10,73,10,0" VerticalAlignment="Top" Click="CbCheckBox_Click"/>
                                 <CheckBox x:Name="cbAutoCloseGame" Content="Automatically Close Mordhau Before Saving" Margin="10,159,10,0" VerticalAlignment="Top" ToolTipService.ShowOnDisabled="True" Click="CbAutoCloseGame_Click" IsEnabled="False"/>
                                 <CheckBox x:Name="cbDisableMovies" Content="Disable Startup Movies" Margin="10,232,10,0" VerticalAlignment="Top" Click="CbDisableMovies_Click" IsEnabled="False"/>
-                                <CheckBox x:Name="cbRestartMordhau" Content="Automatically Start Mordhau After Saving" Margin="32,182,10,0" VerticalAlignment="Top" Click="CbRestartMordhau_Click" IsEnabled="{Binding IsChecked, ElementName=cbAutoCloseGame}" IsChecked="True"/>
-                                <CheckBox x:Name="cbRestartMordhauMode" Content="But Only If Mordhau Was Already Running" Margin="52,205,10,0" VerticalAlignment="Top" Click="CbRestartMordhauMode_Click" IsEnabled="{Binding IsChecked, ElementName=cbRestartMordhau}" IsChecked="True"/>
+                                <CheckBox x:Name="cfgRestartMordhau" Content="Automatically Start Mordhau After Saving" Margin="32,182,10,0" VerticalAlignment="Top" Click="CbCheckBox_Click" IsEnabled="{Binding IsChecked, ElementName=cbAutoCloseGame}" IsChecked="True"/>
+                                <CheckBox x:Name="cfgRestartMordhauMode" Content="But Only If Mordhau Was Already Running" Margin="52,205,10,0" VerticalAlignment="Top" Click="CbCheckBox_Click" IsEnabled="{Binding IsChecked, ElementName=cfgRestartMordhau}" IsChecked="True"/>
                             </Grid>
                         </TabItem>
                         <TabItem Header="Backups">
                             <Grid x:Name="gBackupsBG" Background="#FF454545">
                                 <GroupBox Header="Backup System" Margin="10" Controls:ControlsHelper.ContentCharacterCasing="Normal">
                                     <Grid x:Name="gBackupBoxBG">
-                                        <CheckBox x:Name="cbNormalBackup" Content="Normal Backup Mode" Margin="10,72,10,0" VerticalAlignment="Top" IsEnabled="False" IsChecked="True" Click="CbNormalBackup_Click"/>
-                                        <CheckBox x:Name="cbZipBackup" Content="Compress Backups Into a ZIP Archive" Margin="10,95,10,0" VerticalAlignment="Top" Click="CbZipBackup_Click" IsEnabled="False"/>
+                                        <CheckBox x:Name="cfgNormalBackup" Content="Normal Backup Mode" Margin="10,72,10,0" VerticalAlignment="Top" IsEnabled="False" IsChecked="True" Click="CbCheckBox_Click"/>
+                                        <CheckBox x:Name="cfgZIPBackup" Content="Compress Backups Into a ZIP Archive" Margin="10,95,10,0" VerticalAlignment="Top" Click="CbCheckBox_Click" IsEnabled="False"/>
                                         <Label Content="Backup Destination" Margin="10,10,10,0" VerticalAlignment="Top" Width="490" HorizontalContentAlignment="Center"/>
                                         <TextBox x:Name="tbBackupPath" Margin="10,41,35,0" TextWrapping="Wrap" VerticalAlignment="Top" Controls:TextBoxHelper.Watermark="Choose Destination Folder..." IsReadOnly="True" Focusable="False" TextChanged="TbBackupPath_TextChanged"/>
                                         <Button x:Name="bBrowseBackupPath" Content="..." HorizontalAlignment="Right" Margin="0,41,10,0" VerticalAlignment="Top" Controls:ControlsHelper.ContentCharacterCasing="Normal" Click="BBrowseBackupPath_Click" MouseRightButtonUp="BBrowseBackupPath_MouseRightButtonUp" ToolTip="Left-click to choose folder. Right-click to open the folder if one has been selected."/>
-                                        <CheckBox x:Name="cbLimitZipSize" Content="Limit ZIP Archive to" Margin="10,120,0,0" VerticalAlignment="Top" Height="28" IsEnabled="{Binding IsChecked, ElementName=cbZipBackup}" Width="130" HorizontalAlignment="Left" Click="CbLimitZipSize_Click"/>
-                                        <Controls:NumericUpDown x:Name="nudZipLimit" Minimum="0" Maximum="65535" Margin="145,119,277,0" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=cbZipBackup}" Height="28" HasDecimals="False" NumericInputMode="Numbers" Speedup="False" ValueChanged="NudZipLimit_ValueChanged"/>
-                                        <Label x:Name="lLimitZipSuffix" Content="Files." Margin="0,120,236,0" VerticalAlignment="Top" Height="28" IsEnabled="{Binding IsChecked, ElementName=cbZipBackup}" HorizontalAlignment="Right"/>
+                                        <CheckBox x:Name="cfgZIPLimitActive" Content="Limit ZIP Archive to" Margin="10,120,0,0" VerticalAlignment="Top" Height="28" IsEnabled="{Binding IsChecked, ElementName=cfgZIPBackup}" Width="130" HorizontalAlignment="Left" Click="CbCheckBox_Click"/>
+                                        <Controls:NumericUpDown x:Name="nudZipLimit" Minimum="0" Maximum="65535" Margin="145,119,277,0" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=cfgZIPBackup}" Height="28" NumericInputMode="Numbers" Speedup="False" ValueChanged="NudZipLimit_ValueChanged"/>
+                                        <Label x:Name="lLimitZipSuffix" Content="Files." Margin="0,120,236,0" VerticalAlignment="Top" Height="28" IsEnabled="{Binding IsChecked, ElementName=cfgZIPBackup}" HorizontalAlignment="Right"/>
                                     </Grid>
                                 </GroupBox>
                             </Grid>
@@ -150,7 +150,7 @@
                                 </ComboBox>
                                 <Label Content="Accent" Margin="10,72,10,0" VerticalAlignment="Top" HorizontalContentAlignment="Center"/>
                                 <ComboBox x:Name="cbAppAccents" Margin="10,103,10,0" VerticalAlignment="Top" SelectionChanged="CbAppAccents_SelectionChanged">
-                                    <ComboBoxItem Content="Blue"/>
+                                    <ComboBoxItem Content="Cyan"/>
                                     <ComboBoxItem Content="Red"/>
                                     <ComboBoxItem Content="Green"/>
                                     <ComboBoxItem Content="Purple"/>
@@ -158,7 +158,7 @@
                                     <ComboBoxItem Content="Lime"/>
                                     <ComboBoxItem Content="Emerald"/>
                                     <ComboBoxItem Content="Teal"/>
-                                    <ComboBoxItem Content="Cyan"/>
+                                    <ComboBoxItem Content="Blue"/>
                                     <ComboBoxItem Content="Cobalt"/>
                                     <ComboBoxItem Content="Indigo"/>
                                     <ComboBoxItem Content="Violet"/>
@@ -174,9 +174,9 @@
                                     <ComboBoxItem Content="Taupe"/>
                                     <ComboBoxItem Content="Sienna"/>
                                 </ComboBox>
-                                <CheckBox x:Name="cbConflictWarnings" Content="Display Conflict Warnings" Margin="10,134,0,0" VerticalAlignment="Top" IsChecked="True" Click="CbConflictWarnings_Click"/>
-                                <CheckBox x:Name="cbShortcutKeys" Content="Enable Mercenary List Shortcut Keys" Margin="10,157,10,0" VerticalAlignment="Top" Click="CbShortcutKeys_Click"/>
-                                <CheckBox x:Name="cbUpdateOnStartup" Content="Automatically Check For Updates" Margin="10,180,10,0" VerticalAlignment="Top" IsChecked="True" Click="CbUpdateOnStartup_Click"/>
+                                <CheckBox x:Name="cfgConflictWarnings" Content="Display Conflict Warnings" Margin="10,134,0,0" VerticalAlignment="Top" IsChecked="True" Click="CbCheckBox_Click"/>
+                                <CheckBox x:Name="cfgShortcutsEnabled" Content="Enable Mercenary List Shortcut Keys" Margin="10,157,10,0" VerticalAlignment="Top" Click="CbCheckBox_Click"/>
+                                <CheckBox x:Name="cfgUpdateOnStartup" Content="Automatically Check For Updates" Margin="10,180,10,0" VerticalAlignment="Top" IsChecked="True" Click="CbCheckBox_Click" ToolTip="Check for updates when the app starts"/>
                             </Grid>
                         </TabItem>
                     </TabControl>
