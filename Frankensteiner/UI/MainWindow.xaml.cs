@@ -21,8 +21,6 @@ namespace Frankensteiner
 {
     public partial class MainWindow : MetroWindow
     {
-        string[] appThemes = { "Dark", "Light" };
-        string[] appAccents = { "Red", "Green", "Blue", "Purple", "Orange", "Lime", "Emerald", "Teal", "Cyan", "Cobalt", "Indigo", "Violet", "Pink", "Magenta", "Crimson", "Amber", "Yellow", "Brown", "Olive", "Steel", "Mauve", "Taupe", "Sienna" };
         private string gameConfigPath;
         private ConfigParser config;
         private ObservableCollection<MercenaryItem> _loadedMercenaries = new ObservableCollection<MercenaryItem>();
@@ -119,6 +117,9 @@ namespace Frankensteiner
             #endregion
 
             #region Set Application Theme & Accent
+            string[] appThemes = { "Dark", "Light" };
+            string[] appAccents = { "Red", "Green", "Blue", "Purple", "Orange", "Lime", "Emerald", "Teal", "Cyan", "Cobalt", "Indigo", "Violet", "Pink", "Magenta", "Crimson", "Amber", "Yellow", "Brown", "Olive", "Steel", "Mauve", "Taupe", "Sienna" };
+
             try
             {
                 cbAppThemes.SelectedItem = cbAppThemes.Items.OfType<ComboBoxItem>().FirstOrDefault(x => x.Content.ToString() == Properties.Settings.Default.appTheme);
@@ -694,33 +695,33 @@ namespace Frankensteiner
             if(!String.IsNullOrWhiteSpace(tbMordhauPath.Text))
             {
                 string moviesPath = tbMordhauPath.Text + @"\Mordhau\Content\Movies";
-                string logoMoviePath = moviesPath + @"\LogoSplash.mp4";
-                string ue4MoviePath = moviesPath + @"\UE4_Logo.mp4";
+                string logoMoviePath = moviesPath + @"\LogoSplash.webm";
+                string ue4MoviePath = moviesPath + @"\UE4_Logo.webm";
 
                 if(toggle)
                 {
-                    // Rename .mp4 into .bak
+                    // Rename .webm into .bak
                     if (File.Exists(logoMoviePath) && File.Exists(ue4MoviePath))
                     {
-                        File.Move(logoMoviePath, logoMoviePath.Replace(".mp4", ".bak"));
-                        File.Move(ue4MoviePath, ue4MoviePath.Replace(".mp4", ".bak"));
+                        File.Move(logoMoviePath, logoMoviePath.Replace(".webm", ".bak"));
+                        File.Move(ue4MoviePath, ue4MoviePath.Replace(".webm", ".bak"));
                         Properties.Settings.Default.cfgDisableMovies = true;
                         Properties.Settings.Default.Save();
                     } else {
-                        if (File.Exists(logoMoviePath.Replace(".mp4", ".bak")) && File.Exists(ue4MoviePath.Replace(".mp4", ".bak")))
+                        if (File.Exists(logoMoviePath.Replace(".webm", ".bak")) && File.Exists(ue4MoviePath.Replace(".webm", ".bak")))
                         {
                             Properties.Settings.Default.cfgDisableMovies = true;
                             Properties.Settings.Default.Save();
                         } else {
-                            System.Windows.MessageBox.Show("Unable to disable startup movies - files were not found!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            System.Windows.MessageBox.Show("Unable to locate startup movies.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
                 } else {
-                    // Rename .bak into .mp4
-                    if (File.Exists(logoMoviePath.Replace(".mp4", ".bak")) && File.Exists(ue4MoviePath.Replace(".mp4", ".bak")))
+                    // Rename .bak into .webm
+                    if (File.Exists(logoMoviePath.Replace(".webm", ".bak")) && File.Exists(ue4MoviePath.Replace(".webm", ".bak")))
                     {
-                        File.Move(logoMoviePath.Replace(".mp4", ".bak"), logoMoviePath);
-                        File.Move(ue4MoviePath.Replace(".mp4", ".bak"), ue4MoviePath);
+                        File.Move(logoMoviePath.Replace(".webm", ".bak"), logoMoviePath);
+                        File.Move(ue4MoviePath.Replace(".webm", ".bak"), ue4MoviePath);
                         Properties.Settings.Default.cfgDisableMovies = false;
                         Properties.Settings.Default.Save();
                     } else {
@@ -729,7 +730,7 @@ namespace Frankensteiner
                             Properties.Settings.Default.cfgDisableMovies = false;
                             Properties.Settings.Default.Save();
                         } else {
-                            System.Windows.MessageBox.Show("Unable to re-enable startup movies - files were not found!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            System.Windows.MessageBox.Show("Unable to locate startup movies.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
                 }
@@ -794,7 +795,7 @@ namespace Frankensteiner
         {
             if (!String.IsNullOrWhiteSpace(name))
             {
-                if (CheckMercenaryName(name) && !isMassCreation)
+                if (IsMercenaryNameTaken(name) && !isMassCreation)
                 {
                     System.Windows.MessageBox.Show($"A mercenary with the name \"{name}\" already exists!\nPlease choose a different name.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
@@ -831,7 +832,7 @@ namespace Frankensteiner
             }
         }
 
-        public bool CheckMercenaryName(string name) // Check for any duplicate names
+        public bool IsMercenaryNameTaken(string name)
         {
             bool match = false;
             for (int i = 0; i < _loadedMercenaries.Count; i++)
@@ -1065,20 +1066,20 @@ namespace Frankensteiner
                         }
                         bool changedOrImported = (!selectedMerc.isOriginal || selectedMerc.isOriginal && selectedMerc.isImportedMercenary) ? true : false;
                         // Edit
-                        UpdateContextItem(lbContextEdit, $"Edit {selectedMerc.Name}", true);
-                        UpdateContextItem(lbContextQuickEdit, $"Open {selectedMerc.Name} in Mercenary Editor", true);
-                        UpdateContextItem(lbContextQuickFrankenstein, $"Frankenstein {selectedMerc.Name}", true);
-                        UpdateContextItem(lbContextQuickRandomize, $"Randomize {selectedMerc.Name}", true);
+                        UpdateContextItem(lbContextEdit, $"Edit", true);
+                        UpdateContextItem(lbContextQuickEdit, $"Open in Mercenary Editor", true);
+                        UpdateContextItem(lbContextQuickFrankenstein, $"Frankenstein", true);
+                        UpdateContextItem(lbContextQuickRandomize, $"Randomize", true);
                         // Save
-                        UpdateContextItem(lbContextSave, $"Save {selectedMerc.Name}", changedOrImported);
+                        UpdateContextItem(lbContextSave, $"Save", changedOrImported);
                         // Revert
-                        UpdateContextItem(lbContextRevert, $"Revert {selectedMerc.Name}", changedOrImported);
+                        UpdateContextItem(lbContextRevert, $"Revert", changedOrImported);
                         // Export
-                        UpdateContextItem(lbContextExport, $"Export {selectedMerc.Name} to Clipboard", true);
+                        UpdateContextItem(lbContextExport, $"Export to Clipboard", true);
                         // Copy Face
-                        UpdateContextItem(lbContextCopyFace, $"Copy Face Values from {selectedMerc.Name}", true);
-                        UpdateContextItem(lbContextCopyFormat, "Copy Face Values", true);
-                        UpdateContextItem(lbContextCopyHordeFormat, "Copy Face Values as Horde Format", true);
+                        UpdateContextItem(lbContextCopyFace, $"Copy Face Values", true);
+                        UpdateContextItem(lbContextCopyFormat, "Copy", true);
+                        UpdateContextItem(lbContextCopyHordeFormat, "Copy as Horde Format", true);
                         // Paste Face
                         if (selectedMerc != _copiedMercenary && _copiedMercenary != null)
                         {
@@ -1087,7 +1088,7 @@ namespace Frankensteiner
                             UpdateContextItem(lbContextPasteFace, "No Copied Face Values to Paste", false);
                         }
                         // Delete
-                        UpdateContextItem(lbContextDelete, $"Mark {selectedMerc.Name} for Deletion", true);
+                        UpdateContextItem(lbContextDelete, $"Mark for Deletion", true);
 
                         //TODO: Replace with Revert - alert user before
                         //UpdateContextItem(lbContextDelete, String.Format("Delete {0}", selectedMerc.Name), selectedMerc.importedMercenary, Visibility.Visible);
@@ -1324,17 +1325,6 @@ namespace Frankensteiner
         {
             Process.Start("https://github.com/Dealman/Frankensteiner");
         }
-        // Reddit post is outdated
-        /*private void BReddit_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://www.reddit.com/r/Mordhau/comments/cll3kl/release_frankensteiner_v1200/");
-        }*/
-
-        // Mordhau forums have been discontinued
-        /*private void BMordhau_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://mordhau.com/forum/topic/19301/release-frankensteiner-create-asymmetric-faces/");
-        }*/
         private void BTitleSave_Click(object sender, RoutedEventArgs e)
         {
             List<MercenaryItem> _modifiedMercs = GetModifiedMercenaries();
@@ -1376,9 +1366,17 @@ namespace Frankensteiner
                 faceType = 2;
             }
 
-            for (int i = (int)nudMassNumber.Value; i > 0; i--)
+            for (int i = 0; i < (int)nudMassNumber.Value; i++)
             {
-                CreateMercenary($"MassCreation {i.ToString()}", faceType, true);
+                int i2 = i + 1;
+
+                while (IsMercenaryNameTaken($"MassCreation {i2.ToString()}"))
+                {
+                    // If MassCreation [i] already exists, just keep adding 1 until it doesnt
+                    i2 += 1;
+                }
+
+                CreateMercenary($"MassCreation {i2.ToString()}", faceType, true);
             }
             System.Windows.MessageBox.Show($"Successfully mass created {nudMassNumber.Value.ToString()} mercenaries!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -1392,30 +1390,26 @@ namespace Frankensteiner
         #region Keybind Handler
         private void LbCharacterList_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(Properties.Settings.Default.cfgShortcutsEnabled)
+            // Enter - Open Mercenary Editor
+            if (e.Key == Key.Enter && lbContextMenu.IsVisible == false)
             {
-                // Enter - Open Mercenary Editor
-                if (e.Key == Key.Enter && lbContextMenu.IsVisible == false)
+                if (lbCharacterList.SelectedItems.Count == 1)
                 {
-                    if (lbCharacterList.SelectedItems.Count == 1)
+                    MercenaryItem _selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
+                    if (_selectedMerc != null)
                     {
-                        MercenaryItem _selectedMerc = lbCharacterList.SelectedItem as MercenaryItem;
-                        if (_selectedMerc != null)
+                        MercenaryEditor mercEditor = new MercenaryEditor(_selectedMerc);
+                        mercEditor.Title = $"Mercenary Editor - Editing {_selectedMerc.Name}";
+                        if (mercEditor.ShowDialog().Value)
                         {
-                            MercenaryEditor mercEditor = new MercenaryEditor(_selectedMerc);
-                            mercEditor.Title = $"Mercenary Editor - Editing {_selectedMerc.Name}";
-                            if (mercEditor.ShowDialog().Value)
-                            {
-                                CheckForModifiedMercenaries();
-                            }
+                            CheckForModifiedMercenaries();
                         }
                     }
                 }
-                // Select All Keybind
-                if(e.Key == Key.A && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-                {
-                    lbCharacterList.SelectAll();
-                }
+            }
+
+            if (Properties.Settings.Default.cfgShortcutsEnabled)
+            {
                 // Save Keybind
                 if (e.Key == Key.S && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                 {
@@ -1556,7 +1550,12 @@ namespace Frankensteiner
                     }
                 }*/
                 CheckForModifiedMercenaries();
-            }
+            } else {
+                if ((e.Key == Key.S || e.Key == Key.Z || e.Key == Key.F || e.Key == Key.R || e.Key == Key.E || e.Key == Key.C || e.Key == Key.V) && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+				{
+                    System.Windows.Forms.MessageBox.Show("Keyboard shortcuts are not enabled. Turn them on in Settings > Other", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+			}
         }
         #endregion
     }

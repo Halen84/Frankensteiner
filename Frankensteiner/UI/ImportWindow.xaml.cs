@@ -38,18 +38,16 @@ namespace Frankensteiner
 
             if (!String.IsNullOrWhiteSpace(tbMercenaryCode.Text))
             {
-                _mercenaryList.Clear(); // Clear List For Next Validation
+                _mercenaryList.Clear();
+
+                // Remove leading and trailing whitespace
+                tbMercenaryCode.Text = tbMercenaryCode.Text.TrimStart().TrimEnd();
 
                 Regex profile = new Regex(@"^CharacterProfiles=\(.+\)", RegexOptions.Multiline);
-                Regex ws = new Regex(@"^\s+CharacterProfiles=\(.+\)", RegexOptions.Multiline); // We'll also look for any leading whitespace
                 Regex horde = new Regex(@"(DefaultCharacterFace=\(.+)");
                 foreach (Match match in profile.Matches(tbMercenaryCode.Text))
                 {
                     parsedMercenaries.Add(match.Value);
-                }
-                foreach (Match match in ws.Matches(tbMercenaryCode.Text))
-                {
-                    parsedMercenaries.Add(match.Value.TrimStart());
                 }
                 if (horde.IsMatch(tbMercenaryCode.Text))
                 {
@@ -61,7 +59,7 @@ namespace Frankensteiner
                     MercenaryItem mercenary = new MercenaryItem(merc);
                     if (mercenary.ValidateMercenaryCode())
                     {
-                        if (!mainWindow.CheckMercenaryName(mercenary.Name) || mercenary.isHordeMercenary)
+                        if (!mainWindow.IsMercenaryNameTaken(mercenary.Name) || mercenary.isHordeMercenary)
                         {
                             _mercenaryList.Add(mercenary);
                             bSave.IsEnabled = true;

@@ -200,7 +200,7 @@ namespace Frankensteiner
                           {
                               return true;
                           } else {
-                              MessageBox.Show("Frankensteiner lost a closing quote while trying to validate a mercenary!\n\nMake sure you have double quotes around the mercenary name and category via mercenary code!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                              MessageBox.Show("Lost a closing quote while trying to validate a mercenary!\n\nMake sure you have double quotes (\") around the mercenary name and category via mercenary code!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                               return false;
                           }
                         } else {

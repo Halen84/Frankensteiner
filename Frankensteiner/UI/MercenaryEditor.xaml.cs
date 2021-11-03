@@ -127,7 +127,7 @@ namespace Frankensteiner
             if (tbNewName.Text != null)
             {
                 string stripped = tbNewName.Text.Replace("\"", ""); // If name contains double quotes, remove them
-                if (!mainWindow.CheckMercenaryName(stripped))
+                if (!mainWindow.IsMercenaryNameTaken(stripped))
                 {
                     mercenary.Name = String.IsNullOrWhiteSpace(stripped) ? mercenary.Name : stripped;
                 }

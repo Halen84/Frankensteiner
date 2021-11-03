@@ -42,7 +42,7 @@ namespace Frankensteiner
                     }
                     else
                     {
-                        if (MessageBox.Show("A new update is avaiable! Would you like to install it?", "Frankensteiner", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        if (MessageBox.Show("A new update is available! Would you like to install it?", "Frankensteiner", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         {
                             //Process.Start("https://github.com/Dealman/Frankensteiner/releases/latest");
                             Process.Start("https://github.com/Halen84/Frankensteiner/releases/latest");
